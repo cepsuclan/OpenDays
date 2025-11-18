@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity & Privacy Quiz</title>
+    <!-- Remove Tailwind, add hacker style -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            min-height: 100vh;
+            background: #0f2027; /* fallback for old browsers */
+            background: linear-gradient(135deg, #000000 0%, #0f2027 100%);
+            color: #33ff33;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 0.03em;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #app-container {
+            background: rgba(0,0,0,0.85);
+            border: 2px solid #33ff33;
+            border-radius: 10px;
+            box-shadow: 0 0 30px #33ff3355;
+            padding: 2.5rem 2rem;
+            max-width: 600px;
+            width: 100%;
+            text-align: left;
+        }
+        h1, h2 {
+            color: #33ff33;
+            text-shadow: 0 0 8px #33ff33, 0 0 2px #fff;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-top: 0;
+        }
+        h2 {
+            font-size: 1.3rem;
+        }
+        p {
+            color: #baffba;
+            margin-bottom: 1rem;
+        }
+        button {
+            background: #000;
+            color: #33ff33;
+            border: 1.5px solid #33ff33;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 1rem;
+            padding: 0.6em 1.5em;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 0 8px #33ff3355;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        }
+        button:hover, button:focus {
+            background: #33ff33;
+            color: #000;
+            box-shadow: 0 0 16px #33ff33;
+        }
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 0.7rem;
+            background: #111;
+            color: #33ff33;
+            border: 1px solid #33ff33;
+            border-radius: 4px;
+            padding: 0.8em 1em;
+            font-size: 1rem;
+            transition: background 0.2s, color 0.2s, border 0.2s;
+        }
+        .option-btn.selected, .option-btn:active {
+            background: #33ff33;
+            color: #000;
+            border: 1.5px solid #baffba;
+        }
+        /* Auto-advance feedback */
+        .option-btn.correct {
+            background: #33ff33;
+            color: #000;
+            border: 1.5px solid #baffba;
+        }
+        .option-btn.incorrect {
+            background: #ff3333;
+            color: #000;
+            border: 1.5px solid #ff9999;
+        }
+        .hidden {
+            display: none !important;
+        }
+        #certificate-container {
+            background: #111;
+            border: 2px dashed #33ff33;
+            border-radius: 8px;
+            padding: 2rem 1rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 0 16px #33ff3355;
+            text-align: center;
+        }
+        #certificate-container .name {
+            color: #fff;
+            font-size: 1.5rem;
+            margin: 1rem 0;
+            text-shadow: 0 0 8px #33ff33;
+        }
+        #certificate-container .score-text {
+            color: #33ff33;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        /* Flicker animation for hacker effect */
+        .flicker {
+            animation: flicker 2.5s infinite alternate;
+        }
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                opacity: 1;
+            }
+            20%, 22%, 24%, 55% {
+                opacity: 0.4;
+            }
+        }
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            background: #111;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #33ff33;
+        }
+        /* Responsive */
+        @media (max-width: 700px) {
+            #app-container {
+                padding: 1rem 0.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app-container">
+        <div id="welcome-section">
+            <h1 class="flicker">[ ACCESS GRANTED: CYBERSECURITY QUIZ ]</h1>
+            <p>INITIATING KNOWLEDGE PROTOCOL... TEST YOUR DEFENSES.</p>
+            <button id="start-quiz-btn">START [QUIZ]</button>
+        </div>
+
+        <div id="quiz-section" class="hidden">
+            <h2 id="question-counter"></h2>
+            <p id="question-text"></p>
+            <div id="options-container"></div>
+            <button id="next-question-btn" class="hidden">NEXT [QUESTION]</button>
+        </div>
+
+        <div id="certificate-section" class="hidden">
+            <div id="certificate-container">
+                <h2 class="flicker">/// CERTIFICATION OF COMPLETION ///</h2>
+                <p>THIS CERTIFIES THAT</p>
+                <p id="certificate-name" class="name"></p>
+                <p>HAS SUCCESSFULLY NAVIGATED THE</p>
+                <p>CYBERSECURITY & PRIVACY PROTOCOL</p>
+                <p>PROCESSING <span id="total-questions-answered"></span> DATA PACKETS AND ACHIEVING A SCORE OF</p>
+                <p id="certificate-score" class="score-text"></p>
+            </div>
+            <button id="restart-quiz-btn">RESTART [SIMULATION]</button>
+            <button id="show-answers-btn" style="margin-left:1rem;">SHOW ALL QUESTIONS & ANSWERS</button>
+            <div id="answers-list" class="hidden" style="margin-top:2rem; background:#111; border:1px solid #33ff33; border-radius:8px; padding:1rem;"></div>
+        </div>
+    </div>
+    <script>
+        // Array of 30 cybersecurity and privacy related questions
+        const allQuestions = [
+            {
+                question: "What is a strong password typically characterized by?",
+                options: ["Short length and common words", "Using personal information like birthdays", "A mix of uppercase, lowercase, numbers, and symbols", "Only numbers"],
+                correctAnswer: 2
+            },
+            {
+                question: "What is phishing?",
+                options: ["A type of malware that encrypts files", "A technique to trick users into revealing sensitive information", "A secure method for online banking", "A software update for your computer"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is the primary purpose of a firewall?",
+                options: ["To speed up internet connection", "To protect a network from unauthorized access", "To store user data securely", "To send spam emails"],
+                correctAnswer: 1
+            },
+            {
+                question: "What does 'MFA' stand for in cybersecurity?",
+                options: ["Malware File Analysis", "Multi-Factor Authentication", "Mobile Fraud Alert", "Managed Firewall Access"],
+                correctAnswer: 1
+            },
+            {
+                question: "Why is it important to keep your software updated?",
+                options: ["To get new features only", "To improve internet speed", "To patch security vulnerabilities", "To change the user interface"],
+                correctAnswer: 2
+            },
+            {
+                question: "What is 'ransomware'?",
+                options: ["Software that helps you recover lost files", "Malware that locks your computer or encrypts your files until a ransom is paid", "A program that optimizes system performance", "A tool for secure file sharing"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is the best practice for public Wi-Fi security?",
+                options: ["Assume it's secure and browse freely", "Only use it for non-sensitive activities or with a VPN", "Share personal information to verify connection", "Download files directly from unknown sources"],
+                correctAnswer: 1
+            },
+            {
+                question: "What information should you avoid sharing on social media?",
+                options: ["Your favorite hobbies", "Your current location or travel plans", "Pictures of your pets", "General news articles"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is 'data encryption'?",
+                options: ["Making data publicly accessible", "Converting data into a code to prevent unauthorized access", "Deleting data permanently", "Organizing data into folders"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is a 'VPN' used for in terms of privacy?",
+                options: ["To make your internet connection slower", "To hide your online activity and encrypt your data", "To block all websites", "To connect to local networks only"],
+                correctAnswer: 1
+            },
+            {
+                question: "Which of these is a common sign of a phishing email?",
+                options: ["Perfect grammar and spelling", "A generic greeting like 'Dear Customer'", "A legitimate sender's email address", "No urgent requests"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is 'smishing'?",
+                options: ["Phishing attempts made via email", "Phishing attempts made via text messages", "Phishing attempts made via phone calls", "Phishing attempts made via social media"],
+                correctAnswer: 1
+            },
+            {
+                question: "Why should you use unique passwords for different accounts?",
+                options: ["It's easier to remember", "To prevent a breach of one account from affecting others", "It makes logging in faster", "It's not necessary if you have a strong password"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is the purpose of a 'privacy policy' on a website?",
+                options: ["To list all products sold on the site", "To inform users how their personal data is collected, used, and protected", "To provide customer support contact information", "To display terms and conditions for using the site"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is 'shoulder surfing'?",
+                options: ["Looking over someone's shoulder to steal their password or PIN", "Using a telescope to spy on neighbors", "Browsing the internet on a public computer", "A type of water sport"],
+                correctAnswer: 0
+            },
+            {
+                question: "What is the 'principle of least privilege'?",
+                options: ["Giving users maximum access to all systems", "Granting users only the minimum necessary access rights to perform their job", "Allowing all software to run with administrator rights", "Sharing all passwords with colleagues"],
+                correctAnswer: 1
+            },
+            {
+                question: "Why is it risky to click on suspicious links?",
+                options: ["It might open a new browser tab", "It could lead to malware infection or phishing sites", "It might slow down your internet slightly", "It will automatically update your browser"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is 'social engineering' in cybersecurity?",
+                options: ["Developing social media applications securely", "Manipulating people into performing actions or divulging confidential information", "Creating secure social networks", "Analyzing social trends for marketing"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is the main benefit of using a password manager?",
+                options: ["It automatically generates weak passwords", "It stores all your passwords securely and helps you generate strong ones", "It shares your passwords with others", "It only works for one website"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is 'two-factor authentication' (2FA)?",
+                options: ["Using two different email addresses for login", "A security process that requires two methods of verification to prove identity", "Logging in twice with the same password", "Sharing your login details with two people"],
+                correctAnswer: 1
+            },
+            {
+                question: "What should you do if you receive an email asking for your password?",
+                options: ["Reply with your password immediately", "Click on the link and enter your password", "Report it as phishing and delete it without clicking any links", "Forward it to all your contacts"],
+                correctAnswer: 2
+            },
+            {
+                question: "What is the purpose of 'incognito mode' or 'private browsing'?",
+                options: ["To make your internet connection faster", "To hide your browsing history, cookies, and site data from being saved locally", "To bypass firewalls", "To download files anonymously"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is a 'zero-day vulnerability'?",
+                options: ["A vulnerability that has been known for a long time", "A newly discovered software vulnerability for which no patch or fix exists yet", "A vulnerability that affects zero users", "A vulnerability that is fixed on the same day it's discovered"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is 'malware'?",
+                options: ["Software designed to protect your computer", "Any software intentionally designed to cause damage to a computer, server, client, or computer network", "A program for editing photos", "A tool for creating presentations"],
+                correctAnswer: 1
+            },
+            {
+                question: "Why should you be cautious about connecting unknown USB drives to your computer?",
+                options: ["They might slow down your computer", "They could contain malware that infects your system", "They might not be compatible with your operating system", "They can only store small files"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is 'data minimization' in privacy?",
+                options: ["Collecting as much personal data as possible", "Collecting only the essential personal data needed for a specific purpose", "Deleting all personal data after a short period", "Sharing personal data with third parties without consent"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is a 'brute-force attack'?",
+                options: ["An attack that uses physical force to break into a computer", "An attack that tries every possible combination of characters to guess a password or encryption key", "An attack that floods a network with traffic", "An attack that exploits software vulnerabilities"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is the importance of regularly backing up your data?",
+                options: ["To make your computer run faster", "To free up storage space on your primary drive", "To protect against data loss due to hardware failure, cyberattacks, or accidental deletion", "To share your files with others more easily"],
+                correctAnswer: 2
+            },
+            {
+                question: "What is 'clickjacking'?",
+                options: ["A technique where an attacker tricks a user into clicking on something different from what the user perceives", "A method for speeding up website loading times", "A type of online game", "A way to track website visitors anonymously"],
+                correctAnswer: 0
+            },
+            {
+                question: "What is the safest way to dispose of old electronic devices?",
+                options: ["Throw them in the regular trash", "Sell them without deleting data", "Perform a factory reset and then dispose of them at an authorized e-waste recycling center", "Donate them without wiping data"],
+                correctAnswer: 2
+            }
+        ];
+
+        let userName = '';
+        let selectedQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOptionElement = null; // To keep track of the currently selected option button
+        let answerLocked = false; // Prevent double selection while auto-advancing
+        let typingInterval = null; // To store the interval ID for typing effect
+
+        // Removed Tone.js initialization and sound effect variables
+
+        // Get DOM elements
+        const welcomeSection = document.getElementById('welcome-section');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        const quizSection = document.getElementById('quiz-section');
+        const questionCounter = document.getElementById('question-counter');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextQuestionBtn = document.getElementById('next-question-btn');
+        const certificateSection = document.getElementById('certificate-section');
+        const certificateName = document.getElementById('certificate-name');
+        const totalQuestionsAnswered = document.getElementById('total-questions-answered');
+        const certificateScore = document.getElementById('certificate-score');
+        const restartQuizBtn = document.getElementById('restart-quiz-btn');
+        const showAnswersBtn = document.getElementById('show-answers-btn');
+        const answersList = document.getElementById('answers-list');
+
+        /**
+         * Shuffles an array in place using the Fisher-Yates (Knuth) algorithm.
+         * @param {Array} array - The array to shuffle.
+         * @returns {Array} The shuffled array.
+         */
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+            return array;
+        }
+
+        /**
+         * Prompts the user for their name and sets the userName variable.
+         * If the user cancels or enters an empty name, it defaults to "Guest".
+         */
+        function promptForName() {
+            userName = prompt("Please enter your name:");
+            if (!userName || userName.trim() === '') {
+                userName = "Guest"; // Default name if user cancels or enters empty
+            }
+        }
+
+        /**
+         * Simulates a typing effect for a given element.
+         * @param {HTMLElement} element - The DOM element to type into.
+         * @param {string} text - The full text to type.
+         * @param {number} speed - Typing speed in milliseconds per character.
+         * @returns {Promise<void>} A promise that resolves when typing is complete.
+         */
+        function typeText(element, text, speed = 0) { /* Speed set to 0 for instant display */
+            return new Promise(resolve => {
+                element.textContent = text; // Display full text instantly
+                resolve();
+            });
+        }
+
+        /**
+         * Initializes the quiz by selecting and shuffling 15 questions,
+         * and displaying the first question.
+         */
+        async function startQuiz() {
+            // Shuffle all questions and select the first 15
+            selectedQuestions = shuffleArray([...allQuestions]).slice(0, 15);
+
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedOptionElement = null;
+            answerLocked = false;
+ 
+             // Hide welcome, show quiz
+             welcomeSection.classList.add('hidden');
+             quizSection.classList.remove('hidden');
+             certificateSection.classList.add('hidden');
+ 
+             await displayQuestion();
+         }
+ 
+         /**
+          * Displays the current question and its shuffled options.
+          */
+         async function displayQuestion() {
+             const currentQuestion = selectedQuestions[currentQuestionIndex];
+             questionCounter.textContent = `Question ${currentQuestionIndex + 1} of ${selectedQuestions.length}`;
+ 
+             // Clear options immediately
+             optionsContainer.innerHTML = '';
+ 
+             // Type out the question text (now instant)
+             await typeText(questionText, currentQuestion.question);
+ 
+             // Create and append options after question is typed
+             // Create a temporary array of options to shuffle
+             const shuffledOptions = [...currentQuestion.options];
+             shuffleArray(shuffledOptions); // Shuffle the options for the current question
+ 
+             shuffledOptions.forEach((option, index) => {
+                 const button = document.createElement('button');
+                 button.textContent = option; /* Removed terminal-like prefix */
+                 button.classList.add('option-btn', 'rounded-lg', 'font-medium', 'text-lg', 'transition', 'duration-200', 'ease-in-out');
+                 button.dataset.originalIndex = currentQuestion.options.indexOf(option); // Store original index to check correctness
+                 button.addEventListener('click', () => {
+                    selectOption(button);
+                 });
+                 optionsContainer.appendChild(button);
+             });
+ 
+             // Reset selected option and next button state
+             selectedOptionElement = null;
+             answerLocked = false;
+         }
+ 
+         /**
+          * Handles the selection of an answer option.
+          * Adds a 'selected' class and enables the 'Next Question' button.
+          * @param {HTMLElement} selectedButton - The button element that was clicked.
+          */
+        function selectOption(selectedButton) {
+            if (answerLocked) return; // ignore extra clicks while waiting
+            answerLocked = true;
+
+            // Clear any previous selection visuals
+            const allBtns = optionsContainer.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.classList.remove('selected', 'correct', 'incorrect'));
+
+            // Mark selected visually
+            selectedButton.classList.add('selected');
+            selectedOptionElement = selectedButton;
+
+            // Check correctness immediately
+            const currentQuestion = selectedQuestions[currentQuestionIndex];
+            const selectedOriginalIndex = parseInt(selectedButton.dataset.originalIndex, 10);
+            const isCorrect = selectedOriginalIndex === currentQuestion.correctAnswer;
+            if (isCorrect) {
+                score++;
+                selectedButton.classList.add('correct');
+            } else {
+                selectedButton.classList.add('incorrect');
+                // Highlight the correct option briefly
+                const correctText = currentQuestion.options[currentQuestion.correctAnswer];
+                const correctBtn = Array.from(allBtns).find(b => b.textContent === correctText);
+                if (correctBtn) correctBtn.classList.add('correct');
+            }
+
+            // Auto-advance after a short delay (700ms)
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < selectedQuestions.length) {
+                    displayQuestion();
+                } else {
+                    showCertificate();
+                }
+            }, 700);
+        }
+ 
+         /**
+         * Displays the certificate of completion with the user's name and score.
+         */
+        function showCertificate() {
+            quizSection.classList.add('hidden');
+            certificateSection.classList.remove('hidden');
+
+            certificateName.textContent = userName;
+            totalQuestionsAnswered.textContent = selectedQuestions.length;
+            certificateScore.textContent = `${score} / ${selectedQuestions.length}`; /* Removed [SCORE] suffix */
+        }
+
+        /**
+         * Resets the quiz and returns to the welcome screen, prompting for a new name.
+         */
+        function restartQuiz() {
+            certificateSection.classList.add('hidden');
+            welcomeSection.classList.remove('hidden');
+            answersList.classList.add('hidden');
+            showAnswersBtn.textContent = "SHOW ALL QUESTIONS & ANSWERS";
+            promptForName(); // Prompt for name again on restart
+        }
+
+        // Show/hide answers functionality
+        showAnswersBtn.addEventListener('click', () => {
+            if (answersList.classList.contains('hidden')) {
+                // Build the answers list
+                answersList.innerHTML = selectedQuestions.map((q, i) => `
+                    <div style="margin-bottom:1.2em;">
+                        <div style="color:#33ff33;">Q${i + 1}: ${q.question}</div>
+                        <div style="color:#baffba;">A: ${q.options[q.correctAnswer]}</div>
+                    </div>
+                `).join('');
+                answersList.classList.remove('hidden');
+                showAnswersBtn.textContent = "HIDE QUESTIONS & ANSWERS";
+            } else {
+                answersList.classList.add('hidden');
+                showAnswersBtn.textContent = "SHOW ALL QUESTIONS & ANSWERS";
+            }
+        });
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            promptForName(); // Prompt for name immediately on page load
+
+            startQuizBtn.addEventListener('click', () => {
+                startQuiz();
+            });
+             restartQuizBtn.addEventListener('click', () => {
+                 restartQuiz();
+             });
+         });
+    </script>
+</body>
+</html>
