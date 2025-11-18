@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>University of Lancashire : Binary Demonstration</title>
+    <style>
+        :root{
+            --bg:#1a1a2e;
+            --panel:#0f0f1b;
+            --accent:#00ff00; 
+            --muted:#ccc;
+            --gold:#ffaa00; 
+        }
+        html,body{
+            height:100%; 
+            margin:0; 
+            background:var(--bg); 
+            color:#e0e0e0; 
+            font-family: "Courier New", Courier, monospace;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            color: var(--gold);
+            font-size: 2.2em;
+            text-shadow: 0 0 5px rgba(255, 170, 0, 0.3);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            margin-bottom: 40px;
+        }
+        
+        h2 {
+            color: var(--accent);
+            font-size: 1.5em;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            border-left: 3px solid var(--accent); 
+            padding-left: 10px;
+        }
+        
+        .inline-code {
+            background: #000; 
+            padding: 10px; 
+            border-radius: 4px; 
+            display: inline-block; 
+            margin-top: 5px; 
+            font-size: 1.1em; 
+            color: var(--accent);
+        }
+
+        .highlight-bold {
+            color: var(--gold); 
+            font-weight: bold;
+        }
+        
+        .binary-demonstrator {
+            background: var(--panel);
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.15);
+            margin-top: 40px;
+        }
+
+        .bit-control {
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .bit-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 12%; 
+            text-align: center;
+        }
+
+        .bit-column .value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: var(--gold);
+            height: 30px; 
+            margin-bottom: 10px;
+        }
+
+        .bit-column .bit-position {
+            font-size: 0.8em;
+            color: var(--muted);
+            margin-top: 10px;
+        }
+
+        .output-display {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .output-block h3 {
+            color: var(--accent);
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+        }
+
+        .output-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 1px solid var(--gold);
+            border-radius: 4px;
+            background: rgba(255, 170, 0, 0.1);
+        }
+        
+        .switch-label {
+            position: relative;
+            display: inline-block;
+            width: 30px; 
+            height: 17px; 
+        }
+
+        .switch-label input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 17px; 
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 13px;
+            width: 13px;
+            left: 2px;
+            bottom: 2px;
+            background-color: var(--panel);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent);
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px var(--accent);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(13px); 
+        }
+
+        input:checked ~ .value {
+            color: var(--accent);
+            text-shadow: 0 0 3px rgba(0, 255, 0, 0.5);
+        }
+
+        .muted-text {
+            color: var(--muted);
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
+
+        .completed-status {
+            color: var(--accent) !important; 
+            font-weight: bold;
+        }
+
+        .next-button {
+            text-decoration: none;
+            background: var(--accent);
+            color: var(--bg); 
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1.2em;
+            display: inline-block;
+            transition: background 0.2s, transform 0.2s;
+            text-shadow: none;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+        }
+
+        .next-button:hover {
+            background: #4bff4b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 255, 0, 0.6);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>> BINARY CONVERSION DEMONSTRATOR 🔢</h1>
+
+        <p>
+            Computers and digital systems are built on simple <span class="highlight-bold">electrical signals</span>—they only understand two states: <span class="highlight-bold">ON (1)</span> or <span class="highlight-bold">OFF (0)</span>. This fundamental concept is called <span class="highlight-bold">Binary</span>, a base-2 number system. Every piece of digital information you see—text, images, and video—is ultimately stored and transmitted using long strings of these ON/OFF signals, or <span class="highlight-bold">bits</span> (Binary Digits).
+        </p>
+        <p>
+            Eight bits grouped together form a <span class="highlight-bold">byte</span>, which can represent 256 unique values, allowing us to count from 0 up to 255. This range is created by the <span class="highlight-bold">place value</span> system, where each bit's position has a value that is double the one before it.
+        </p>
+
+        <h2>How Binary Place Value Works</h2>
+        <p>
+            A <span class="highlight-bold">bit</span> is a simple placeholder that is either <span class="highlight-bold">OFF (0)</span> or <span class="highlight-bold">ON (1)</span>. In this demonstration, each toggle switch represents one bit. The total number is calculated by adding the <span class="highlight-bold">place values</span> of all bits that are set to <span class="highlight-bold">ON</span>.
+        </p>
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.9em;">
+            <thead style="background: rgba(255, 170, 0, 0.1);">
+                <tr>
+                    <th style="padding: 8px; border: 1px solid rgba(255, 170, 0, 0.5); color: var(--gold);">Position</th>
+                    <th style="padding: 8px; border: 1px solid rgba(255, 170, 0, 0.5); color: var(--gold);">8th Bit</th>
+                    <th style="padding: 8px; border: 1px solid rgba(255, 170, 0, 0.5); color: var(--gold);">7th Bit</th>
+                    <th style="padding: 8px; border: 1px solid rgba(255, 170, 0, 0.5); color: var(--gold);">6th Bit</th>
+                    <th style="padding: 8px; border: 1px solid rgba(255, 170, 0, 0.5); color: var(--gold);">5th Bit</th>
+                    <th style="padding: 8px; border: 1px solid rgba(255, 170, 0, 0.5); color: var(--gold);">4th Bit</th>
+                    <th style="padding: 8px; border: 1px solid rgba(255, 170, 0, 0.5); color: var(--gold);">3rd Bit</th>
+                    <th style="padding: 8px; border: 1px solid rgba(255, 170, 0, 0.5); color: var(--gold);">2nd Bit</th>
+                    <th style="padding: 8px; border: 1px solid rgba(255, 170, 0, 0.5); color: var(--gold);">1st Bit</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="background: rgba(0, 255, 0, 0.05);">
+                    <td style="padding: 8px; border: 1px solid rgba(255, 255, 255, 0.1);"><span class="highlight-bold">Value</span></td>
+                    <td style="padding: 8px; border: 1px solid rgba(255, 255, 255, 0.1);"><span class="highlight-bold">128</span></td>
+                    <td style="padding: 8px; border: 1px solid rgba(255, 255, 255, 0.1);"><span class="highlight-bold">64</span></td>
+                    <td style="padding: 8px; border: 1px solid rgba(255, 255, 255, 0.1);"><span class="highlight-bold">32</span></td>
+                    <td style="padding: 8px; border: 1px solid rgba(255, 255, 255, 0.1);"><span class="highlight-bold">16</span></td>
+                    <td style="padding: 8px; border: 1px solid rgba(255, 255, 255, 0.1);"><span class="highlight-bold">8</span></td>
+                    <td style="padding: 8px; border: 1px solid rgba(255, 255, 255, 0.1);"><span class="highlight-bold">4</span></td>
+                    <td style="padding: 8px; border: 1px solid rgba(255, 255, 255, 0.1);"><span class="highlight-bold">2</span></td>
+                    <td style="padding: 8px; border: 1px solid rgba(255, 255, 255, 0.1);"><span class="highlight-bold">1</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Challenge: Try Different Values! 👆</h2>
+        <p>
+            Use the switches below to represent different numbers. See if you can create the following decimal values: <span class="highlight-bold">15, 85, and 200.</span>
+        </p>
+
+        <div id="challenge-status" style="display: flex; justify-content: space-around; margin-bottom: 20px; font-size: 1.1em; background: #000; padding: 10px; border-radius: 4px;">
+            <div id="status-15">Target 15: <span class="highlight-bold" style="color: var(--muted);">PENDING</span></div>
+            <div id="status-85">Target 85: <span class="highlight-bold" style="color: var(--muted);">PENDING</span></div>
+            <div id="status-200">Target 200: <span class="highlight-bold" style="color: var(--muted);">PENDING</span></div>
+        </div>
+        
+        <div class="binary-demonstrator">
+            <div class="bit-control">
+                <div class="bit-column">
+                    <div class="value" data-value="128">128</div>
+                    <label class="switch-label">
+                        <input type="checkbox" data-value="128" onchange="updateDecimal()">
+                        <span class="slider"></span>
+                    </label>
+                    <div class="bit-position">Bit 7</div>
+                </div>
+
+                <div class="bit-column">
+                    <div class="value" data-value="64">64</div>
+                    <label class="switch-label">
+                        <input type="checkbox" data-value="64" onchange="updateDecimal()">
+                        <span class="slider"></span>
+                    </label>
+                    <div class="bit-position">Bit 6</div>
+                </div>
+
+                <div class="bit-column">
+                    <div class="value" data-value="32">32</div>
+                    <label class="switch-label">
+                        <input type="checkbox" data-value="32" onchange="updateDecimal()">
+                        <span class="slider"></span>
+                    </label>
+                    <div class="bit-position">Bit 5</div>
+                </div>
+
+                <div class="bit-column">
+                    <div class="value" data-value="16">16</div>
+                    <label class="switch-label">
+                        <input type="checkbox" data-value="16" onchange="updateDecimal()">
+                        <span class="slider"></span>
+                    </label>
+                    <div class="bit-position">Bit 4</div>
+                </div>
+
+                <div class="bit-column">
+                    <div class="value" data-value="8">8</div>
+                    <label class="switch-label">
+                        <input type="checkbox" data-value="8" onchange="updateDecimal()">
+                        <span class="slider"></span>
+                    </label>
+                    <div class="bit-position">Bit 3</div>
+                </div>
+
+                <div class="bit-column">
+                    <div class="value" data-value="4">4</div>
+                    <label class="switch-label">
+                        <input type="checkbox" data-value="4" onchange="updateDecimal()">
+                        <span class="slider"></span>
+                    </label>
+                    <div class="bit-position">Bit 2</div>
+                </div>
+
+                <div class="bit-column">
+                    <div class="value" data-value="2">2</div>
+                    <label class="switch-label">
+                        <input type="checkbox" data-value="2" onchange="updateDecimal()">
+                        <span class="slider"></span>
+                    </label>
+                    <div class="bit-position">Bit 1</div>
+                </div>
+
+                <div class="bit-column">
+                    <div class="value" data-value="1">1</div>
+                    <label class="switch-label">
+                        <input type="checkbox" data-value="1" onchange="updateDecimal()">
+                        <span class="slider"></span>
+                    </label>
+                    <div class="bit-position">Bit 0</div>
+                </div>
+            </div>
+
+            <div class="output-display">
+                <div class="output-block">
+                    <h3>Current Binary Value (Byte)</h3>
+                    <div class="output-value" id="binary-output">00000000</div>
+                </div>
+                <div class="output-block">
+                    <h3>Current Decimal Total</h3>
+                    <div class="output-value" id="decimal-output">0</div>
+                </div>
+            </div>
+
+            <div class="muted-text">
+                The minimum decimal value for a byte is 0 (00000000) and the maximum is 255 (11111111).
+            </div>
+        </div>
+        
+        <div id="next-stage-container" style="text-align: center; margin-top: 40px; min-height: 40px;">
+            </div>
+
+    </div>
+
+    <script>
+        // Global state to track challenge completion. This state persists as the user interacts.
+        let challengeMet = {
+            15: false,
+            85: false,
+            200: false
+        };
+
+        function updateDecimal() {
+            let totalDecimal = 0;
+            let binaryString = "";
+
+            // 1. Calculate Decimal Total and Binary String
+            const columns = document.querySelectorAll('.bit-control .bit-column');
+            
+            columns.forEach(column => {
+                const switchElement = column.querySelector('input[type="checkbox"]');
+                const value = parseInt(column.querySelector('.value').innerText);
+                const valueElement = column.querySelector('.value');
+
+                if (switchElement.checked) {
+                    totalDecimal += value;
+                    binaryString += "1";
+                    valueElement.style.color = 'var(--accent)';
+                    valueElement.style.textShadow = '0 0 3px rgba(0, 255, 0, 0.5)';
+                } else {
+                    binaryString += "0";
+                    valueElement.style.color = 'var(--gold)';
+                    valueElement.style.textShadow = 'none';
+                }
+            });
+
+            // 2. Update the display outputs
+            document.getElementById('decimal-output').textContent = totalDecimal;
+            document.getElementById('binary-output').textContent = binaryString;
+
+
+            // 3. Challenge Tracking Logic
+            const targets = [15, 85, 200];
+            let allMet = true;
+
+            targets.forEach(target => {
+                const statusSpan = document.querySelector(`#status-${target} span`);
+                
+                if (totalDecimal === target) {
+                    challengeMet[target] = true;
+                }
+
+                if (challengeMet[target]) {
+                    statusSpan.textContent = 'MET! ✅';
+                    statusSpan.classList.add('completed-status');
+                    statusSpan.style.color = 'var(--accent)';
+                } else {
+                    allMet = false;
+                }
+            });
+
+            // 4. Show Next Stage Button
+            const nextStageContainer = document.getElementById('next-stage-container');
+            
+            if (allMet) {
+                if (!nextStageContainer.querySelector('.next-button')) {
+                    nextStageContainer.innerHTML = `
+                        <a href="Networking.html" class="next-button">
+                            > CHALLENGE COMPLETE: MOVE TO NETWORKING <
+                        </a>
+                    `;
+                }
+            }
+        }
+
+        // Call once on load to ensure the initial state is 00000000 and 0
+        document.addEventListener('DOMContentLoaded', updateDecimal);
+    </script>
+</body>
+</html>

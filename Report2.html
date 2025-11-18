@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident Report - Level 2 )</title>
+    <style>
+        
+        :root{
+            --bg:#1a1a2e;
+            --panel:#0f0f1b;
+            --accent:#00ff00;
+            --muted:#ccc;
+            --gold:#ffaa00; 
+            --border: rgba(255,170,0,0.2);
+        }
+        html,body{height:100%; margin:0; background:var(--bg); color:#e0e0e0; font-family: "Courier New", Courier, monospace;}
+
+        /* Nav */
+        .top-nav {
+            display:flex; gap:8px; align-items:center; padding:10px 16px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.12), transparent);
+            border-bottom:1px solid rgba(255,255,255,0.02); position: sticky; top: 0; z-index: 50;
+        }
+        .tabs { display:flex; gap:6px; align-items:center; }
+        .tab {
+            display:inline-block; padding:8px 14px; border-radius:8px; color: #ffe9cc; text-decoration:none;
+            background: transparent; border: 1px solid rgba(255,170,0,0.2); transition: background 160ms, transform 120ms;
+            font-weight:600; font-size:0.95rem;
+        }
+        .tab:hover{ transform: translateY(-2px); background: rgba(255,170,0,0.04); }
+        .tab.active{
+            background: var(--gold); color: #1a1a2e;
+            box-shadow: 0 6px 18px rgba(255,170,0,0.12);
+        }
+        .brand { margin-left: auto; font-size:0.95rem; color: var(--muted); }
+
+        /* Report */
+        .report-container {
+            max-width: 900px; margin: 25px auto; padding: 20px;
+            background-color: var(--panel); border-radius: 12px;
+            box-shadow: 0 0 25px rgba(255, 170, 0, 0.12);
+        }
+        h1 { color: var(--gold); text-align: center; border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-top: 0; }
+        h2 { color: var(--gold); border-bottom: 1px solid var(--border); padding-bottom: 5px; margin-top: 25px; }
+        h3 { color: var(--muted); margin-top: 15px; }
+
+        /* Details (Collapsible) */
+        details {
+            margin-top: 15px; border: 1px solid var(--border); border-radius: 6px;
+            padding: 10px; background-color: #121226;
+        }
+        details summary {
+            font-weight: 700; color: var(--gold); cursor: pointer; padding: 5px;
+            list-style: none; 
+        }
+        details summary::-webkit-details-marker { display: none; }
+        details summary::before {
+            content: "▶"; 
+            margin-right: 10px; font-size: 0.9em;
+            color: var(--gold);
+        }
+        details[open] summary::before {
+            content: "▼"; 
+        }
+        details p { margin: 8px 0; padding-left: 20px; }
+        details ul, details ol { margin: 8px 0; padding-left: 40px; }
+        .evidence-box {
+            background-color: #0d0d1b; border: 1px solid var(--gold); padding: 10px;
+            margin: 10px 0; border-radius: 4px; overflow-x: auto;
+            white-space: pre-wrap; font-size: 0.9em; line-height: 1.4;
+        }
+        .log-entry { color: #f0f0f0; margin: 3px 0; }
+        
+       
+        .highlight-green {
+            color: var(--accent);
+        }
+        
+        
+    </style>
+</head>
+<body>
+
+<div class="top-nav" role="navigation" aria-label="Primary">
+    <div class="tabs" role="tablist" aria-label="Main tabs">
+        <a href="detective.html" class="tab" role="tab" aria-selected="false">Level 1 Dashboard</a>
+        <a href="Report.html" class="tab" role="tab" aria-selected="false">Level 1 Report</a>
+        <a href="detective2.html" class="tab" role="tab" aria-selected="false">Level 2 Dashboard</a>
+        <a href="Report2.html" class="tab active" role="tab" aria-selected="true">Level 2 Report</a>
+        <a href="Breach Sim.html" class="tab" role="tab" aria-selected="false">Breach Sim</a>
+    </div>
+    <div class="brand">University of Lancashire — Training</div>
+</div>
+
+<div class="report-container">
+    <h1>Final Incident Report (Level 2)</h1>
+    
+    <p><strong>Case File:</strong> UL-CB-2025-L2</p>
+    <p><strong>Analyst:</strong> You : Chief Information Security Officer</p>
+    <p><strong>Date of Report:</strong> <span id="report-date-header"></span></p>
+
+    <details open>
+        <summary>1. Executive Summary</summary>
+        <h2>Incident Overview</h2>
+        <p>This report details the findings of a Level 2 cyber incident involving advanced evasion techniques and the exfiltration of sensitive academic data.</p>
+        <p>The attacker successfully gained access using a <span class="highlight-green"><strong>stolen service account</strong></span>, moved laterally across two internal systems, and utilized a <span class="highlight-green"><strong>non-standard exfiltration endpoint</strong></span> to steal a large database file, demonstrating an effort to blend in with network noise.</p>
+        <p>The primary objectives of the intrusion were met: <span class="highlight-green"><strong>Access</strong></span>, <span class="highlight-green"><strong>Lateral Movement</strong></span>, and <span class="highlight-green"><strong>Data Exfiltration</strong></span>.</p>
+        
+        <h2>Key Findings Summary</h2>
+        <ul>
+            <li>Initial Access: External IP `203.0.113.50` connected successfully via SSH.</li>
+            <li>Compromised Host: The initial machine compromised was the Entry Point at `192.168.1.110`.</li>
+            <li>Lateral Movement: The attacker moved from the Entry Point to the Database Server at `192.168.1.240` using an SQL connection.</li>
+            <li>Stolen Data: The file `Student_Records_Backup.sql` was stolen.</li>
+            <li>Exploited Credential: The user account <span class="highlight-green"><strong>db_user_backup</strong></span> was compromised.</li>
+        </ul>
+    </details>
+
+    <details>
+        <summary>2. Technical Findings and Log Evidence</summary>
+        <h2>2.1 Initial Access and External IP (Objective 1)</h2>
+        <p>The attacker established their foothold using an SSH session, suggesting a compromised credential for a service account designed for server management.</p>
+        <div class="evidence-box">
+            <p class="log-entry"><strong>Attacker's IP:</strong> 203.0.113.50</p>
+            <p class="log-entry"><strong>Log Entry:</strong> <code>{time: "18:02:20", source: "203.0.113.50", target: "192.168.1.110", action: "SSH login successful (User 'db_user_backup')"}</code></p>
+        </div>
+        
+        <h2>2.2 Compromised Host & Exploited Credential (Objective 2 & 4)</h2>
+        <p>The internal host first compromised (Entry Point) was the target of the initial successful connection. The log explicitly names the user account used for this breach.</p>
+        <div class="evidence-box">
+            <p class="log-entry"><strong>Compromised Host:</strong> 192.168.1.110 (Entry Point)</p>
+            <p class="log-entry"><strong>Exploited Credential:</strong> db_user_backup</p>
+            <p class="log-entry"><strong>Log Entry:</strong> (Same as above) <code>{time: "18:02:20", source: "203.0.113.50", target: "192.168.1.110", action: "SSH login successful (User 'db_user_backup')"}</code></p>
+        </div>
+
+        <h2>2.3 Lateral Movement and Target Server (Objective 3)</h2>
+        <p>The attacker used the compromised Entry Point to scan and then connect to the Database Server (`192.168.1.240`), utilizing a specialized SQL connection protocol to evade simpler RDP monitoring.</p>
+        <div class="evidence-box">
+            <p class="log-entry"><strong>Target Server:</strong> 192.168.1.240 (Database Server)</p>
+            <p class="log-entry"><strong>Log Entry:</strong> <code>{time: "18:02:50", source: "192.168.1.110", target: "192.168.1.240", action: "SQL Connection Initiated (Attempt to bypass firewall)"}</code></p>
+        </div>
+
+        <h2>2.4 Data Exfiltration (Objective 5)</h2>
+        <p>The attacker successfully moved the stolen file back to their external IP address (`203.0.113.50`) from the compromised Entry Point. The file name is explicitly recorded.</p>
+        <div class="evidence-box">
+            <p class="log-entry"><strong>Exfiltrated File:</strong> Student_Records_Backup.sql</p>
+            <p class="log-entry"><strong>Log Entry:</strong> <code>{time: "18:03:30", source: "192.168.1.110", target: "203.0.113.50", action: "Large outbound file transfer: Student_Records_Backup.sql (70 MB)"}</code></p>
+        </div>
+    </details>
+
+    <details>
+        <summary>3. Mitigation and Remediation</summary>
+        <h2>3.1 Immediate Actions</h2>
+        <p>The following steps must be taken immediately to contain the breach:</p>
+        <ol>
+            <li>
+                <h3>Lock/Disable Compromised Accounts</h3>
+                <p>Immediately <span class="highlight-green"><strong>disable or reset the password</strong></span> for the compromised user account: <span class="highlight-green"><strong>db_user_backup</strong></span> across all systems and review all service accounts for similar privilege levels.</p>
+            </li>
+            <li>
+                <h3>Isolate and Rebuild Servers</h3>
+                <p><span class="highlight-green"><strong>Take the Entry Point</strong></span> (<span class="highlight-green"><strong>192.168.1.110</strong></span>) and <span class="highlight-green"><strong>Database Server</strong></span> (<span class="highlight-green"><strong>192.168.1.240</strong></span>) <span class="highlight-green"><strong>offline</strong></span>. Do not return them to service until they have been forensically imaged and completely rebuilt from a trusted, clean source.</p>
+            </li>
+            <li>
+                <h3>Block External IP Addresses</h3>
+                <p>Implement a firewall rule to <span class="highlight-green"><strong>deny all inbound/outbound traffic</strong></span> to the attacker's endpoint: <span class="highlight-green"><strong>203.0.113.50</strong></span>.</p>
+            </li>
+        </ol>
+        
+        <h2>3.2 Recommended Long-Term Changes</h2>
+        <ol>
+            <li>
+                <h3>Implement Multi-Factor Authentication (MFA)</h3>
+                <p>Mandate MFA for all high-privilege accounts, including all service and administrative users, to prevent credential stuffing attacks.</p>
+            </li>
+            <li>
+                <h3>Restrict Outbound Traffic</h3>
+                <p>Restrict the Database Server (192.168.1.240) from initiating any unnecessary outbound connections. Data theft relies on moving data out; limiting this greatly reduces the risk of exfiltration.</p>
+            </li>
+            <li>
+                <h3>Review Application/Service Account Privileges</h3>
+                <p>Audit the <span class="highlight-green"><strong>db_user_backup</strong></span> account's permissions. This account should not have the ability to run general SSH commands or initiate large outbound transfers.</p>
+            </li>
+        </ol>
+    </details>
+
+    <p style="margin-top: 30px; color: var(--gold);">[END OF REPORT]</p>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const date = new Date();
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        
+        // Use 'en-GB' locale for DD/MM/YYYY format
+        const ukDate = date.toLocaleDateString('en-GB', options); 
+        
+        // date into the header
+        document.getElementById('report-date-header').textContent = ukDate;
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>University of Lancashire : Incident Response Training</title>
+    <style>
+        
+        :root{
+            --bg:#1a1a2e;
+            --panel:#0f0f1b;
+            --accent:#00ff00; 
+            --gold:#ffaa00; 
+        }
+        html,body{
+            height:100%; 
+            margin:0; 
+            background:var(--bg); 
+            color:#e0e0e0; 
+            font-family: "Courier New", Courier, monospace;
+        }
+
+        /* TOP TABS NAV */
+        .top-nav {
+            display:flex;
+            gap:8px;
+            align-items:center;
+            padding:10px 16px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.12), transparent);
+            border-bottom:1px solid rgba(255,255,255,0.02);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .tabs {
+            display:flex;
+            gap:6px;
+            align-items:center;
+            flex-wrap: wrap;
+        }
+        .tab {
+            display:inline-block;
+            padding:8px 14px;
+            border-radius:8px;
+            color: #e9ffe9;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.2s, color 0.2s;
+            border: 1px solid transparent;
+            font-size: 0.9em;
+        }
+        .tab:hover {
+            background-color: rgba(0, 255, 0, 0.05);
+            color: var(--accent);
+        }
+        .tab.current {
+            background-color: var(--accent);
+            color: var(--panel); 
+            pointer-events: none;
+            border: 1px solid var(--accent);
+        }
+        
+        /* === PAGE LAYOUT === */
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .header {
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+        }
+        .header img { 
+            height: 60px; 
+            width: auto;
+        }
+        h1 {
+            color: var(--gold);
+            font-size: 2.2em;
+            text-shadow: 0 0 5px rgba(255, 170, 0, 0.3);
+            margin: 0;
+        }
+        h2 {
+            color: var(--accent);
+            font-size: 1.5em;
+            margin-top: 40px;
+            border-left: 3px solid var(--accent);
+            padding-left: 10px;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 1.0em;
+        }
+
+        /* === STAGE BLOCKS === */
+        .stage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        .stage-card {
+            background: var(--panel);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .stage-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 255, 0, 0.1);
+        }
+        .stage-card h3 {
+            margin-top: 0;
+            color: var(--gold);
+            font-size: 1.2em;
+        }
+        .stage-card p {
+            font-size: 0.9em;
+            color: var(--muted);
+        }
+
+        /* BUTTON STYLE */
+        .start-button {
+            display: block;
+            width: 80%;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 15px 30px;
+            background-color: var(--accent);
+            color: var(--panel);
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+            font-size: 1.1em;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+        .start-button:hover {
+            background-color: var(--panel);
+            color: var(--accent);
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.8);
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <div class="tabs">
+            <a href="index.html" class="tab current">0. Introduction</a>
+            <a href="detective.html" class="tab">1. Level 1 Incident</a>
+            <a href="detective2.html" class="tab">2. Level 2 Incident</a>
+            <a href="Breach Sim.html" class="tab">3. Breach Simulator</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <img src="university_of_lancashire_logo.png" alt="University of Lancashire Logo">
+            <h1>> CYBERSECURITY: INCIDENT RESPONSE TRAINING PROTOCOL V1.0</h1>
+        </div>
+
+        <h2>[I] Why Cybersecurity Matters to You</h2>
+        <p>
+            You might not be training to be a security professional, but in today's digital world, every role is a cybersecurity role. Whether you end up in finance, management, engineering, or marketing, you will be handling valuable data. Understanding the fundamentals of <span style="color: var(--accent); font-weight: bold;">digital risk</span>, <span style="color: var(--accent); font-weight: bold;">data breaches</span>, and <span style="color: var(--accent); font-weight: bold;">incident response</span> is no longer optional—it's a core professional skill. This site is designed to give you that hands-on, non-technical experience.
+        </p>
+        <p>
+            Think of yourself as a <span style="color: var(--accent); font-weight: bold;">Digital Detective</span>. We won't focus on writing code, but on using logic and analysis to understand the narrative of a breach: who, what, where, and how.
+        </p>
+
+        <h2>[II] Your Training Pathway</h2>
+        <p>
+            We will progress through three stages, each building on the last, moving you from passive observer to active decision-maker in a crisis scenario.
+        </p>
+
+        <div class="stage-grid">
+            
+            <div class="stage-card">
+                <h3>STAGE 1: Level 1 Incident (The Simple Path)</h3>
+                <p>
+                    We begin with a <span style="color: var(--accent); font-weight: bold;">Level 1 Incident</span>, which represents a common, easily traceable attack. Your goal is to analyze provided log data to identify the attacker's <span style="color: var(--accent); font-weight: bold;">Initial Access Point</span>, their <span style="color: var(--accent); font-weight: bold;">Lateral Movement</span>, and their <span style="color: var(--accent); font-weight: bold;">Final Objective</span>. This is about finding the clear, simple path of a basic breach.
+                </p>
+            </div>
+
+            <div class="stage-card">
+                <h3>STAGE 2: Level 2 Incident (The Complex Attack)</h3>
+                <p>
+                    Next, you will tackle a <span style="color: var(--accent); font-weight: bold;">Level 2 Incident</span>. The attacker's techniques here are more sophisticated, requiring closer examination and a deeper understanding of <span style="color: var(--accent); font-weight: bold;">privilege escalation</span> and <span style="color: var(--accent); font-weight: bold;">stealth</span>. The data set will be more complex, and the compromise will be less obvious.
+                </p>
+            </div>
+
+            <div class="stage-card">
+                <h3>STAGE 3: Breach Simulator (Consequence & Choice)</h3>
+                <p>
+                    Finally, you will enter the <span style="color: var(--accent); font-weight: bold;">Breach Simulator</span>. Here, another incident is active, and the outcome is determined by the <span style="color: var(--accent); font-weight: bold;">critical choices</span> you make as the Incident Commander. Your decisions on containment, eradication, and communication will have immediate, tangible consequences on the organization's recovery and reputation.
+                </p>
+            </div>
+            
+        </div>
+
+        <a href="detective.html" class="start-button">
+            > START TRAINING: LEVEL 1 INCIDENT ANALYSIS
+        </a>
+
+    </div>
+    
+</body>
+</html>

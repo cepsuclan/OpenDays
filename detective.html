@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>University of Lancashire : Cyber Breach - Log Analysis</title>
+<style>
+    :root{
+        --bg:#1a1a2e;
+        --panel:#0f0f1b;
+        --accent:#00ff00;
+        --muted:#ccc;
+        --gold:#ffaa00;
+    }
+    html,body{height:100%; margin:0; background:var(--bg); color:#e0e0e0; font-family: "Courier New", Courier, monospace;}
+    /* === TOP TABS NAV === */
+    .top-nav {
+        display:flex;
+        gap:8px;
+        align-items:center;
+        padding:10px 16px;
+        background: linear-gradient(180deg, rgba(0,0,0,0.12), transparent);
+        border-bottom:1px solid rgba(255,255,255,0.02);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+    }
+    .tabs {
+        display:flex;
+        gap:6px;
+        align-items:center;
+    }
+    .tab {
+        display:inline-block;
+        padding:8px 14px;
+        border-radius:8px;
+        color: #e9ffe9;
+        text-decoration:none;
+        background: transparent;
+        border: 1px solid rgba(0,255,0,0.06);
+        transition: background 160ms, transform 120ms;
+        font-weight:600;
+        font-size:0.95rem;
+    }
+    .tab:hover{ transform: translateY(-2px); background: rgba(0,255,0,0.04); }
+    .tab.active{
+        background: var(--accent);
+        color: #1a1a2e;
+        box-shadow: 0 6px 18px rgba(0,255,65,0.12);
+    }
+    .brand {
+        margin-left: auto;
+        font-size:0.95rem;
+        color: var(--muted);
+    }
+
+    /* === PAGE LAYOUT === */
+    .container {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        max-width: 1400px;
+        margin: 18px auto;
+        padding: 0 12px;
+    }
+    .panel {
+        background-color: var(--panel);
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 255, 0, 0.14);
+        margin-bottom: 20px;
+    }
+    #controls-panel { flex: 0 0 360px; order: 2; }
+    #log-viewer { flex-grow: 1; order: 1; }
+    h2,h3{ color: var(--accent); border-bottom:1px solid var(--accent); padding-bottom:6px; font-size:1.15rem; margin:0 0 10px 0;}
+    strong{ color: var(--gold); font-weight:700; }
+    a { color: var(--gold); text-decoration: underline; }
+
+    /* inputs & buttons */
+    #ipFilter, #answerInput {
+        width:100%;
+        padding:12px;
+        margin:10px 0;
+        border-radius:8px;
+        border:1px solid var(--accent);
+        background:#2a2a44;
+        color:#fff;
+        box-sizing:border-box;
+        font-size:1rem;
+    }
+    button {
+        background: var(--accent);
+        color:#1a1a2e;
+        border:none;
+        padding:10px 12px;
+        border-radius:6px;
+        cursor:pointer;
+        font-weight:700;
+        width:100%;
+    }
+    button:hover{ filter:brightness(0.95); }
+
+    /* log table */
+    #logTable{ width:100%; border-collapse:collapse; font-size:0.82rem; table-layout:fixed; }
+    #logTable th, #logTable td{ padding:6px 8px; border-bottom:1px dashed rgba(58,58,94,0.6); text-align:left; word-wrap:break-word; }
+    #logTable th{ background:var(--accent); color:#121212; position:sticky; top:0; z-index:1; }
+
+    .status-message{ margin-top:10px; padding:10px; border-radius:6px; font-weight:700;}
+    .status-message.success{ background:#145a32; color:#a9ffb4; }
+    .status-message.error{ background:#6e1414; color:#ffb4b4; }
+
+    .intro-text{ color:#ccc; margin-bottom:12px; font-size:0.95rem; }
+
+    .log-filter-container { background: linear-gradient(135deg,#07121a 0%, rgba(0,255,65,0.02) 100%); border:2px solid var(--accent); padding:10px; border-radius:8px; }
+    .filter-label{ color:var(--accent); font-weight:700; margin-bottom:6px; display:block; }
+
+    .network-tip{ font-size:0.9rem; margin-top:10px; padding:10px; border:1px solid var(--accent); border-radius:6px; color:#ccc; background:#15152a; }
+    .network-tip strong{ color:var(--accent); }
+    
+    /* Required Action Header */
+    .action-header {
+        color: var(--gold);
+        font-weight: 700;
+        text-shadow: 0 0 4px rgba(255, 170, 0, 0.5);
+    }
+
+    @media (max-width:820px){
+        .container{ flex-direction:column; padding:0 10px; }
+        #controls-panel{ order: 3; width:100%; flex-basis:auto; }
+        #log-viewer{ order:1; }
+        .top-nav{ padding:8px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="top-nav" role="navigation" aria-label="Primary">
+    <div class="tabs" role="tablist" aria-label="Main tabs">
+        <a href="detective.html" class="tab active" role="tab" aria-selected="true">Level 1 Dashboard</a>
+        <a href="Report.html" class="tab" role="tab" aria-selected="false">Level 1 Report</a>
+        <a href="detective2.html" class="tab" role="tab" aria-selected="false">Level 2 Dashboard</a>
+        <a href="Report2.html" class="tab" role="tab" aria-selected="false">Level 2 Report</a>
+        <a href="Breach Sim.html" class="tab" role="tab" aria-selected="false">Breach Sim</a>
+    </div>
+    <div class="brand">University of Lancashire — Training</div>
+</div>
+
+<div class="container">
+    <div id="log-viewer" class="panel" aria-live="polite">
+        <h2>Network Traffic Log (Level 1: Basic Intrusion)</h2>
+        <div id="log-output-container" style="max-height:74vh; overflow:auto;">
+            <table id="logTable" aria-describedby="logDescription">
+                <thead>
+                    <tr><th>Time</th><th>Source_IP</th><th>Target_IP</th><th>Action_Summary</th></tr>
+                </thead>
+                <tbody id="log-body"></tbody>
+            </table>
+            <div id="logDescription" style="display:none;">This table shows recorded network events in chronological order.</div>
+        </div>
+    </div>
+
+    <div id="controls-panel" class="panel" role="region" aria-labelledby="current-step-title">
+        <h2>Network Analysis Task</h2>
+
+        <div id="narrative-section">
+            <h3 id="current-step-title">Objective 1: Find Where the Attacker Got In</h3>
+            <p class="intro-text">
+                Welcome, Investigator! These logs record network activity — every connection made in a short time window.
+                Your mission is to trace how an outsider gained access to the university’s systems.
+            </p>
+
+            <p class="intro-text">
+                Each <strong>IP address</strong> you see is like a digital street address for a computer.
+                <br><small>Addresses beginning with <code>192.168</code> are <strong>internal</strong>. Any other address could be and  <strong>external</strong>.</small>
+            </p>
+
+            <p id="narrative-text"><span class="action-header">Your Task:</span>
+                Find the first time an <strong>external computer</strong> (not 192.168.x.x) successfully connected to the network.
+            </p>
+        </div>
+
+        <input type="text" id="answerInput" placeholder="Enter your answer here" aria-label="Submit evidence">
+        <button onclick="validateAnswer()">Submit Evidence</button>
+        <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>
+
+        <div id="next-level-container" style="margin-top:12px;"></div>
+
+        
+
+        <hr style="border-color: rgba(58,58,94,0.6); margin: 15px 0;">
+
+    
+        <div id="log-filter-section" class="log-filter-container" aria-labelledby="log-filter-label">
+            <div class="filter-label" id="log-filter-label">Log Filter</div>
+            <span class="filter-hint" style="color:#bfffbf; font-size:0.92rem;">Tip: Try typing <code>'successful'</code> to quickly find where the breach began.</span>
+
+            <p id="strategy-tip" style="margin-top:8px; color:#bfffbf; font-size:0.92rem;">
+                Strategy: Use simple keywords to search the logs — like "login", "RDP", or "file transfer".
+            </p>
+            <div class="filter-input-row" style="margin-top:8px;">
+                <input type="text" id="ipFilter" placeholder="Filter by IP, target, or keyword (e.g., successful)" onkeyup="filterLogs()" aria-label="Log filter">
+            </div>
+        </div>
+
+        <div id="dynamic-help-section">
+            <div class="network-tip" role="note">
+                <strong>Networking Tip:</strong>
+                <span> “192.168.x.x” addresses belong to your local network — like rooms inside a building. Anything else is from the outside world.</span>
+            </div>
+        </div>
+        <div class="logo-footer" style="text-align:center; margin-top:14px; padding-top:10px; border-top:1px dashed rgba(58,58,94,0.6);">
+            <img src="university_of_lancashire_logo.png" alt="University of Lancashire Logo" style="width:80%; opacity:0.75;">
+        </div>
+    </div>
+</div>
+
+<script>
+/*  RawLogs  */
+const rawLogs = [
+    // --- Noise ---
+    {time: "18:00:01", source: "192.168.1.201", target: "N/A", action: "Login successful (Internal user 'jdoe')"},
+    {time: "18:00:10", source: "192.168.1.180", target: "Printer_Server", action: "Print Job initiated (Document: Q4_Budget_Review.xlsx)"},
+    {time: "18:00:25", source: "192.168.1.112", target: "52.1.2.3", action: "Video Conference stream started"},
+    {time: "18:00:35", source: "192.168.1.254", target: "8.8.8.8", action: "Routine DNS lookup (Health Check)"},
+
+    // --- MALICIOUS ACTIVITY START ---
+    {time: "18:00:40", source: "172.55.9.123", target: "192.168.1.100", action: "Remote desktop login (successful) to Jump Host (user 'admin_tool')"},
+    {time: "18:00:45", source: "192.168.1.100", target: "192.168.1.100", action: "Local command execution: 'net use' (Network discovery)"},
+    {time: "18:00:50", source: "192.168.1.100", target: "192.168.1.250", action: "RDP Session Initiation (User: 'admin_tool')"},
+    {time: "18:01:00", source: "192.168.1.100", target: "192.168.1.250", action: "File copy to local temp: 'Q1_P&L_Final.zip' (10 MB)"},
+    {time: "18:01:10", source: "192.168.1.250", target: "192.168.1.250", action: "System health check initiated"},
+    {time: "18:01:20", source: "192.168.1.100", target: "192.168.1.250", action: "RDP Session Terminated"},
+
+    // --- EXFILTRATION ---
+    {time: "18:01:30", source: "192.168.1.100", target: "172.55.9.123", action: "Large outbound file transfer: Q1_P&L_Final.zip (25 MB)"},
+
+    // --- Noise ---
+    {time: "18:01:40", source: "192.168.1.254", target: "Storage_Server", action: "Automated nightly backup (Status: 10% complete)"},
+    {time: "18:01:50", source: "192.168.1.112", target: "52.1.2.3", action: "Video Conference stream paused"},
+    {time: "18:02:00", source: "172.55.9.123", target: "192.168.1.100", action: "External connection terminated"}
+];
+
+/* -------------------------
+   Investigation State
+   ------------------------- */
+let currentStep = 1;
+const externalIP = '172.55.9.123';
+const jumpHost = '192.168.1.100';
+const remoteDesktop = '192.168.1.250';
+const exploitedUser = 'admin_tool';
+const exfiltratedFile = 'Q1_P&L_Final.zip';
+
+/*   Render / Init   */
+document.addEventListener('DOMContentLoaded', () => {
+    renderLogs(rawLogs);
+    updateNarrative();
+});
+
+/* render logs into table */
+function renderLogs(logs) {
+    const tbody = document.getElementById('log-body');
+    tbody.innerHTML = '';
+    logs.forEach(log => {
+        const row = tbody.insertRow();
+        row.insertCell().textContent = log.time;
+        row.insertCell().textContent = log.source;
+        row.insertCell().textContent = log.target;
+        row.insertCell().textContent = log.action;
+    });
+}
+
+/* remove spaces pre-processing */
+function filterLogs() {
+    // strip whitespace, then lowercase //
+    const raw = document.getElementById('ipFilter').value;
+    const filterValue = raw.trim().replace(/\s+/g, '').toLowerCase();
+
+    const filteredResults = rawLogs.filter(log =>
+        log.source.toLowerCase().replace(/\s+/g, '').includes(filterValue) ||
+        log.target.toLowerCase().replace(/\s+/g, '').includes(filterValue) ||
+        log.action.toLowerCase().replace(/\s+/g, '').includes(filterValue)
+    );
+    renderLogs(filteredResults);
+}
+
+/* help panel  */
+function updateHelpPanel() {
+    const strategyTip = document.getElementById('strategy-tip');
+    const networkTipHeader = document.getElementById('network-tip-header');
+    const networkTipContent = document.getElementById('network-tip-content');
+
+    switch(currentStep) {
+        case 1:
+            strategyTip.textContent = "Strategy: To spot the intruder, filter the log by the word 'successful'. The 'Source_IP' of that entry is the attacker's public address.";
+            break;
+        case 2:
+            strategyTip.textContent = `Strategy: Filter the log using the attacker's IP (${externalIP}). When the attacker's IP is the 'Source_IP', the 'Target_IP' is the first internal machine they hit.`;
+            break;
+        case 3:
+            strategyTip.textContent = `Strategy: Filter by the Jump Host's IP (${jumpHost}) to filter. Look for the next step where it moves to a new computer using a 'Remote Desktop' action (RDP).`;
+            break;
+        case 4:
+            strategyTip.textContent = "Strategy: Revisit the very first successful entry (Objective 1). The log's 'Action_Summary' explicitly names the account whose password was stolen.";
+            break;
+        case 5:
+            strategyTip.textContent = `Strategy: Filter by the attacker's IP (${externalIP}), but this time check where it is the 'Target_IP'. This entry shows the file being stolen from the network.`;
+            break;
+        default:
+            strategyTip.textContent = "Investigation Complete!";
+            break;
+    }
+}
+
+
+function toggleInputVisibility(isVisible) {
+    const answerInput = document.getElementById('answerInput');
+    // Assuming the button is the next sibling element in the DOM structure
+    const submitButton = answerInput.nextElementSibling; 
+    
+    // Hide or show the input and button based on the flag
+    answerInput.style.display = isVisible ? 'block' : 'none';
+    submitButton.style.display = isVisible ? 'block' : 'none';
+}
+
+
+/* narrative text updates */
+function updateNarrative() {
+    const title = document.getElementById('current-step-title');
+    const text = document.getElementById('narrative-text');
+    const actionHeader = '<span class="action-header">Required Action:</span>';
+
+    switch(currentStep) {
+        case 1:
+            title.textContent = "Objective 1: Identify Initial Access";
+            text.innerHTML = actionHeader + " Identify the external IP address (the non-192.168 IP) that first successfully connected to your network. This is the attacker's starting point.";
+            toggleInputVisibility(true); 
+            break;
+        case 2:
+            title.textContent = "Objective 2: Identify Compromised Host (Jump Host)";
+            text.innerHTML = actionHeader + " Use the attacker's public IP to find the first internal computer they reached (the Jump Host). Provide the internal IP address (192.168.x.x) of that machine.";
+            toggleInputVisibility(true);
+            break;
+        case 3:
+            title.textContent = "Objective 3: Identify Lateral Movement (Remote Desktop Server)";
+            text.innerHTML = actionHeader + " The attacker is now 'moving deeper' into the network. Identify the internal IP address of the second machine they accessed using Remote Desktop (RDP).";
+            toggleInputVisibility(true);
+            break;
+        case 4:
+            title.textContent = "Objective 4: Identify Exploited Credential";
+            text.innerHTML = actionHeader + " Determine the User Account whose password the attacker stole and successfully used for initial access. Provide the exact user account name as seen in the logs.";
+            toggleInputVisibility(true);
+            break;
+        case 5:
+            title.textContent = "Objective 5: Identify Stolen Data";
+            text.innerHTML = actionHeader + " The attacker stole the files by sending them back to their public IP. Identify the exact file name (case sensitive) of the critical evidence that was exfiltrated.";
+            toggleInputVisibility(true);
+            break;
+        default:
+            // **Investigation Complete**
+            title.textContent = "Level 1 Investigation Concluded. 🎉";
+            text.innerHTML = "You have successfully traced the attack from initial access to data exfiltration. All evidence points to a breach of the 'Jump Host' and the theft of '" + exfiltratedFile + "'.";
+            showNextLevelPrompt();
+            toggleInputVisibility(false); // **Hide input and button**
+            break;
+    }
+
+    updateHelpPanel();
+}
+
+/* next-level prompt */
+function showNextLevelPrompt() {
+    const container = document.getElementById('next-level-container');
+    container.innerHTML = `
+        <div style="background: rgba(0,255,0,0.03); color:var(--accent); padding:12px; border-radius:8px; text-align:center;">
+            <p>Excellent work, Detective! You've mastered the basics of log analysis.</p>
+            <p><button onclick="loadLevel2()" style="width:auto; padding:8px 12px; background:var(--gold); color:#1a1a1a; border-radius:6px; border:none; cursor:pointer;">Start Level 2 Investigation</button></p>
+            <p style="margin-top:10px;"><strong>Official Documentation:</strong> <a href="Report.html" target="_blank">View the Final Investigation Report</a></p>
+        </div>
+    `;
+}
+
+/* load level 2 */
+function loadLevel2(){ window.location.href = 'detective2.html'; }
+
+/* incorrect clue helper */
+function getIncorrectClue(step) {
+    const clues = {
+        1: "Filter by 'successful'. The correct IP is the attacker's external public IP address (the one that is NOT a 192.168 IP) and is listed as the Source_IP.",
+        2: `Filter the logs using the attacker's public IP (${externalIP}) as the 'Source_IP'. Which internal IP is listed as the 'Target_IP' of the successful login? (This is the Jump Host).`,
+        3: `Filter by the Jump Host IP (${jumpHost}) as the 'Source_IP'. Look for the next step where it moves to a new computer using a 'Remote Desktop' action (RDP).`,
+        4: "Look closely at the 'Action_Summary' of the initial successful login (Objective 1). The exact stolen user account is explicitly mentioned.",
+        5: "Filter the logs by 'Large outbound file transfer'. This is the stolen data leaving the network. The exact filename is visible in that entry."
+    };
+    return "Evidence rejected. <strong>Rethink your analysis:</strong> " + clues[step];
+}
+
+/* validate answer (removed spaces from input) */
+function validateAnswer() {
+    const answerInput = document.getElementById('answerInput');
+    const userAnswer = answerInput.value.trim().replace(/\s/g, '');
+    const statusDiv = document.getElementById('statusMessage');
+    statusDiv.className = 'status-message';
+
+    const correctAnswers = {
+        1: { value: externalIP, text: "Correct. The initial breach came from the external address " + externalIP + "." },
+        2: { value: jumpHost, text: "Verification confirmed. The initial host compromised was the Jump Host (" + jumpHost + ")." },
+        3: { value: remoteDesktop, text: "Verification confirmed. The Remote Desktop Server (" + remoteDesktop + ") was the first lateral target." },
+        4: { value: exploitedUser, text: "Verification confirmed. The credentials used were for the highly privileged user '" + exploitedUser + "'." },
+        5: { value: exfiltratedFile, text: "Investigation complete. You have successively confirmed the breach stole or exfiltrated the file " + exfiltratedFile + "." }
+    };
+
+    const answerObj = correctAnswers[currentStep];
+
+    if (answerObj && userAnswer === answerObj.value) {
+        statusDiv.classList.add('success');
+        statusDiv.textContent = answerObj.text;
+        currentStep++;
+        answerInput.value = '';
+        updateNarrative();
+    } else {
+        statusDiv.classList.add('error');
+        statusDiv.innerHTML = getIncorrectClue(currentStep);
+    }
+}
+
+</script>
+</body>
+</html>

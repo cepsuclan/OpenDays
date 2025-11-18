@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draggable Floor Plan Labels - Threat Modeling Game</title>
+    <style>
+        /* CSS Styles */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 20px;
+            background-size: cover; /* Cover the whole page */
+        }
+
+        /* Using a pseudo-element on body for better control over opacity/fade */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('uclan logo.png');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 50%; /* Adjust size of the logo */
+            opacity: 0.05; /* Make it very faded (adjust this value: 0.05 is 5% visibility) */
+            z-index: -1; /* Place it behind all content */
+        }
+        
+        /* Container for the image and dropped labels */
+        #diagram-container {
+            position: relative;
+            /* **IMPORTANT:** Adjust width/height to your image size (800x600 is assumed here) */
+            width: 800px;
+            height: 600px;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+            margin-bottom: 30px;
+            background-color: rgba(26, 26, 26, 0.9); /* Add slight background to container to ensure content contrast */
+        }
+
+        /* Image element must be inside the container and use the map */
+        #floorplan-image {
+            display: block;
+            width: 100%;
+            height: 100%;
+            /* **IMPORTANT:** Replace 'floor_plan.png' with the actual path/name of your image */
+            content: url('floor_plan.png'); 
+        }
+
+        /* Style for the draggable labels */
+        .draggable-label {
+            cursor: grab;
+            position: static;
+            padding: 5px 10px;
+            background-color: #ff6600; /* Neon orange for labels */
+            color: #1a1a1a;
+            border-radius: 5px;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(255, 102, 0, 0.8);
+            z-index: 100;
+            transition: background-color 0.3s, box-shadow 0.2s, left 0.3s ease, top 0.3s ease; 
+            touch-action: none;
+        }
+
+        /* Style for incorrect placement */
+        .label-incorrect {
+            background-color: #ff004c !important; /* Bright red neon */
+            box-shadow: 0 0 15px 5px rgba(255, 0, 76, 1) !important;
+            color: white;
+        }
+
+        /* Style for correct placement in step 3 (optional: to make them look different) */
+        .control-label {
+            background-color: #00ffff; /* Cyan for controls */
+            color: #1a1a1a;
+        }
+
+
+        .draggable-label:active {
+            cursor: grabbing;
+        }
+
+        /* Area for the initial labels to sit */
+        #label-tray {
+            position: absolute;
+            top: 50px;
+            right: -180px;
+            width: 150px;
+            height: auto;
+            border: 1px dashed #333;
+            padding: 10px;
+            background-color: #2b2b2b;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* New styles for the Introduction Box */
+        #introduction-box {
+            max-width: 800px;
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 2px solid #ff6600;
+            border-radius: 10px;
+            background-color: #2b2b2b;
+            box-shadow: 0 0 15px rgba(255, 102, 0, 0.5);
+            z-index: 10;
+        }
+        #introduction-box h2 {
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff;
+        }
+        #introduction-box p {
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="introduction-box">
+        <div id="instruction-content">
+            <h2>🚨 Mission Briefing: Threat Modeling 101</h2>
+            <p>Welcome to your first cybersecurity exercise! We are going to use the core principles of **Threat Modeling**—a critical practice used by security experts—to protect a house.</p>
+            
+            <p>In cybersecurity, Threat Modeling helps us identify what can go wrong before an attacker finds the flaw. The first rule is: **Define your Assets!**</p>
+
+            <h3>🎯 Step 1: Identify Your Assets (Label the Rooms)</h3>
+            <p>Just as a software system has valuable components (data, code), a home has **assets** (people, electronics, privacy) stored within its rooms. To protect the house, we must first map out the containers for these assets.</p>
+            
+            <p>Your task is to be the security architect: **Drag the labels from the tray** and place them onto the correct corresponding room on the floor plan. Use the furniture outlines as your guide!</p>
+        </div>
+    </div>
+
+    <h1>🏠 Security Architect: Label the Floor Plan</h1>
+    
+    <div id="diagram-container">
+        
+        <img id="floorplan-image" src="floor_plan.png" usemap="#floorplan-map" alt="Neon Floor Plan">
+
+        <div id="label-tray">
+            <div id="KITCHEN" class="draggable-label" draggable="true">KITCHEN</div>
+            <div id="LIVING-ROOM" class="draggable-label" draggable="true">LIVING ROOM</div>
+            <div id="BEDROOMS" class="draggable-label" draggable="true">BEDROOMS</div>
+            <div id="BATHROOM" class="draggable-label" draggable="true">BATHROOM</div>
+            <div id="GARDEN" class="draggable-label" draggable="true">GARDEN</div>
+        </div>
+    </div>
+
+    <map name="floorplan-map" id="floorplan-map">
+        <area target="_self" alt="Bedrooms" data-required-label="BEDROOMS" href="" coords="474,583,213,577,218,54,471,60,463,118,459,136" shape="poly">
+        <area target="_self" alt="bathroom" data-required-label="BATHROOM" href="" coords="463,106,623,244" shape="rect">
+        <area target="" alt="Kitchen" data-required-label="KITCHEN" href="" coords="617,104,819,320" shape="rect">
+        <area target="" alt="living room" data-required-label="LIVING-ROOM" href="" coords="575,322,810,491" shape="rect">
+        <area target="" alt="garden" data-required-label="GARDEN" href="" coords="515,501,801,702" shape="rect">
+    </map>
+
+
+    <script>
+        const diagramContainer = document.getElementById('diagram-container');
+        const labelTray = document.getElementById('label-tray');
+        const mapAreas = document.querySelectorAll('#floorplan-map area');
+        const imageElement = document.getElementById('floorplan-image');
+        
+        let activeLabel = null;
+        let xOffset = 0;
+        let yOffset = 0;
+        let currentStep = 1; // Tracks the current step for validation logic
+
+        // Store the correct answers for each step
+        const step1Answers = {
+            'BEDROOMS': 'BEDROOMS',
+            'BATHROOM': 'BATHROOM',
+            'KITCHEN': 'KITCHEN',
+            'LIVING-ROOM': 'LIVING-ROOM',
+            'GARDEN': 'GARDEN'
+        };
+
+        const step2Answers = {
+            'BEDROOMS': 'OVERSLEEPING',
+            'BATHROOM': 'SLIP-AND-FALL',
+            'KITCHEN': 'COOKING-FIRE',
+            'LIVING-ROOM': 'TV-DAMAGE',
+            'GARDEN': 'PESTICIDE-POISONING'
+        };
+
+        // Note: The key is the required threat ID, the value is the correct control ID
+        // The drop zone required label will be the THREAT ID in Step 3
+        const step3Answers = {
+            'OVERSLEEPING': 'SMART-ALARM',
+            'COOKING-FIRE': 'SMOKE-DETECTOR',
+            'PESTICIDE-POISONING': 'LOCKED-CABINET',
+            'SLIP-AND-FALL': 'NON-SLIP-MATS',
+            'TV-DAMAGE': 'SURGE-PROTECTOR',
+        };
+
+        // --- CORE GAME FLOW & DRAG FUNCTIONS ---
+
+        function getCurrentLabels() {
+            return document.querySelectorAll('.draggable-label');
+        }
+
+        function setupDragListeners() {
+            const currentLabels = getCurrentLabels();
+            currentLabels.forEach(label => {
+                // Remove existing listeners to prevent duplication
+                label.removeEventListener('mousedown', dragStart); 
+                label.removeEventListener('touchstart', dragStart);
+
+                // Add new listeners
+                label.addEventListener('mousedown', dragStart);
+                label.addEventListener('touchstart', dragStart);
+            });
+        }
+
+        function getScaleFactor() {
+            return imageElement.naturalWidth / imageElement.offsetWidth;
+        }
+
+        function dragStart(e) {
+            e.preventDefault();
+            activeLabel = e.target;
+            activeLabel.style.zIndex = 101;
+            activeLabel.style.boxShadow = '0 0 15px 5px rgba(255, 102, 0, 1)';
+
+            let clientX, clientY;
+            if (e.type === 'touchstart') {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+                document.addEventListener('touchmove', drag);
+                document.addEventListener('touchend', dragEnd);
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+                document.addEventListener('mousemove', drag);
+                document.addEventListener('mouseup', dragEnd);
+            }
+            
+            xOffset = clientX - activeLabel.getBoundingClientRect().left;
+            yOffset = clientY - activeLabel.getBoundingClientRect().top;
+            
+            if (activeLabel.parentElement.id === 'label-tray') {
+                const rect = activeLabel.getBoundingClientRect();
+                const containerRect = diagramContainer.getBoundingClientRect();
+                
+                activeLabel.style.position = 'absolute';
+                activeLabel.style.left = (rect.left - containerRect.left) + 'px';
+                activeLabel.style.top = (rect.top - containerRect.top) + 'px';
+                
+                diagramContainer.appendChild(activeLabel);
+            }
+        }
+
+        function drag(e) {
+            if (!activeLabel) return;
+            
+            let clientX, clientY;
+            if (e.type === 'touchmove') {
+                e.preventDefault();
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
+            const containerRect = diagramContainer.getBoundingClientRect();
+            let newX = clientX - containerRect.left - xOffset;
+            let newY = clientY - containerRect.top - yOffset;
+
+            const labelWidth = activeLabel.offsetWidth;
+            const labelHeight = activeLabel.offsetHeight;
+            newX = Math.max(0, Math.min(newX, containerRect.width - labelWidth));
+            newY = Math.max(0, Math.min(newY, containerRect.height - labelHeight));
+
+            activeLabel.style.left = newX + 'px';
+            activeLabel.style.top = newY + 'px';
+        }
+
+        function dragEnd(e) {
+            if (!activeLabel) return;
+
+            activeLabel.style.zIndex = 100;
+            activeLabel.style.boxShadow = '0 0 10px rgba(255, 102, 0, 0.8)';
+
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', dragEnd);
+            document.removeEventListener('touchmove', drag);
+            document.removeEventListener('touchend', dragEnd);
+
+            const zone = findDropZone(activeLabel);
+
+            if (zone) {
+                snapToZone(activeLabel, zone); 
+                activeLabel.dataset.placedIn = zone.getAttribute('data-required-label');
+                activeLabel.dataset.placed = 'true';
+            } else {
+                activeLabel.dataset.placedIn = '';
+                activeLabel.dataset.placed = 'false';
+            }
+            
+            updatePlacedCountAndValidate();
+            activeLabel = null;
+        }
+
+        function findDropZone(label) {
+            // Logic to determine if the label's center is within a map area
+            const labelRect = label.getBoundingClientRect();
+            const containerRect = diagramContainer.getBoundingClientRect();
+            
+            const labelCenterX = (labelRect.left + labelRect.right) / 2;
+            const labelCenterY = (labelRect.top + labelRect.bottom) / 2;
+            
+            const x = labelCenterX - containerRect.left;
+            const y = labelCenterY - containerRect.top;
+
+            let foundZone = null;
+            const scale = getScaleFactor(); 
+
+            mapAreas.forEach(area => {
+                const shape = area.getAttribute('shape');
+                const scaledCoords = area.getAttribute('coords').split(',').map(Number);
+                
+                if (shape === 'poly' || shape === 'rect') {
+                    if (isPointInArea(x, y, shape, scaledCoords, scale)) {
+                        foundZone = area;
+                    }
+                }
+            });
+            return foundZone;
+        }
+
+        function isPointInArea(x, y, shape, coords, scale) {
+            // Geometry check (Point in Polygon/Rectangle)
+            const adjustedCoords = coords.map(c => c / scale);
+
+            if (shape === 'rect') {
+                const x1 = adjustedCoords[0], y1 = adjustedCoords[1];
+                const x2 = adjustedCoords[2], y2 = adjustedCoords[3];
+                return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+
+            } else if (shape === 'poly') {
+                let inside = false;
+                for (let i = 0, j = adjustedCoords.length - 2; i < adjustedCoords.length; i += 2) {
+                    const xi = adjustedCoords[i], yi = adjustedCoords[i+1];
+                    const xj = adjustedCoords[j], yj = adjustedCoords[j+1];
+                    
+                    const intersect = ((yi > y) != (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+                    if (intersect) inside = !inside;
+                    j = i;
+                }
+                return inside;
+            }
+            return false;
+        }
+
+        function snapToZone(label, zone) {
+            // Moves label to the center of the drop zone area
+            const containerRect = diagramContainer.getBoundingClientRect();
+            const coords = zone.getAttribute('coords').split(',').map(Number);
+            const shape = zone.getAttribute('shape');
+            const scale = getScaleFactor();
+            const adjustedCoords = coords.map(c => c / scale);
+            
+            let zoneCenterX, zoneCenterY;
+
+            if (shape === 'rect') {
+                zoneCenterX = (adjustedCoords[0] + adjustedCoords[2]) / 2;
+                zoneCenterY = (adjustedCoords[1] + adjustedCoords[3]) / 2;
+            } else if (shape === 'poly') {
+                let xSum = 0, ySum = 0;
+                for(let i = 0; i < adjustedCoords.length; i += 2) {
+                    xSum += adjustedCoords[i];
+                    ySum += adjustedCoords[i+1];
+                }
+                const numPoints = adjustedCoords.length / 2;
+                zoneCenterX = xSum / numPoints;
+                zoneCenterY = ySum / numPoints;
+            } else {
+                return; 
+            }
+
+            const newLeft = zoneCenterX - (label.offsetWidth / 2);
+            const newTop = zoneCenterY - (label.offsetHeight / 2);
+
+            label.style.left = newLeft + 'px';
+            label.style.top = newTop + 'px';
+        }
+
+
+        function updatePlacedCountAndValidate() {
+            const currentLabels = getCurrentLabels();
+            let placedLabels = 0;
+            currentLabels.forEach(label => {
+                if (label.dataset.placed === 'true') {
+                    placedLabels++;
+                }
+            });
+
+            if (placedLabels === currentLabels.length) {
+                setTimeout(checkPlacement, 100);
+            }
+        }
+
+        function checkPlacement() {
+            const currentLabels = getCurrentLabels();
+            let allCorrect = true;
+            
+            currentLabels.forEach(label => {
+                const requiredId = label.dataset.placedIn;
+                
+                // Determine the correct label ID based on the current step
+                let correctLabelId = '';
+                if (currentStep === 1) {
+                    // In Step 1, the label ID must match the room name (which is in requiredId)
+                    correctLabelId = requiredId;
+                } else if (currentStep === 2) {
+                    // In Step 2, the label ID (the threat) must match the required ID stored in the map area
+                    correctLabelId = requiredId;
+                } else if (currentStep === 3) {
+                    // In Step 3, the label ID (the control) must match the control in step3Answers for the required threat ID
+                    correctLabelId = step3Answers[requiredId];
+                }
+
+                if (label.dataset.placed === 'true') {
+                    if (label.id !== correctLabelId) {
+                        allCorrect = false;
+                        label.classList.add('label-incorrect');
+                    } else {
+                        label.classList.remove('label-incorrect');
+                    }
+                } else {
+                    allCorrect = false; 
+                }
+            });
+
+            if (allCorrect) {
+                if (currentStep === 1) {
+                    completeStep1();
+                } else if (currentStep === 2) {
+                    completeStep2();
+                }
+                // TODO: Add completeStep3() once the final step is created
+            } else {
+                // Labels remain in place, highlighted in red.
+                alert("❌ Incorrect placement. Highlighted labels (in red) are in the wrong spot, but they remain in place. Please adjust the red labels and try dropping them again!");
+            }
+        }
+
+        function resetLabels() {
+            const currentLabels = getCurrentLabels();
+            currentLabels.forEach(label => {
+                labelTray.appendChild(label);
+                label.style.position = 'static';
+                label.style.left = 'auto';
+                label.style.top = 'auto';
+                label.dataset.placed = 'false';
+                label.dataset.placedIn = '';
+                label.classList.remove('label-incorrect');
+            });
+        }
+
+
+        // --- STEP TRANSITION FUNCTIONS ---
+
+        function completeStep1() {
+            const instructionContent = document.getElementById('instruction-content');
+            
+            instructionContent.innerHTML = `
+                <h2>🎉 Mission Complete: Assets Defined!</h2>
+                <p>Congratulations, Security Architect! You have successfully completed **Step 1: Identify Assets** by mapping all the valuable areas of the home.</p>
+                <p>Now that we know what we need to protect, it's time to figure out what we're protecting it from.</p>
+                <p><a href="#" id="start-step2-button" style="display: block; padding: 10px; background-color: #00ffff; color: #1a1a1a; text-align: center; border-radius: 5px; margin-top: 15px; text-decoration: none; font-weight: bold;">GO TO STEP 2: IDENTIFYING THREATS</a></p>
+            `;
+            
+            document.getElementById('start-step2-button').addEventListener('click', (e) => {
+                e.preventDefault();
+                initStep2();
+            });
+        }
+
+        function initStep2() {
+            currentStep = 2;
+            const instructionContent = document.getElementById('instruction-content');
+            
+            // 1. Update Instructions for Step 2
+            instructionContent.innerHTML = `
+                <h2>🚨 Step 2: Identify and Map Threats!</h2>
+                <p>Excellent work. We are now in the **Threat Identification** phase (the "T" in STRIDE). This is where we ask: **What can go wrong?**</p>
+                <p>Your task is to place the following **Threats** into the rooms where they are **most likely to occur**.</p>
+                <p>Drag the new labels from the tray onto the appropriate room on the floor plan!</p>
+            `;
+
+            // 2. Clear the current label tray contents (rooms)
+            while (labelTray.firstChild) {
+                labelTray.removeChild(labelTray.firstChild);
+            }
+            
+            // 3. Define the new threat labels and their expected rooms (for validation in Step 2)
+            const threatMapping = [
+                { name: "Oversleeping", room: "BEDROOMS" },
+                { name: "Cooking Fire", room: "KITCHEN" },
+                { name: "Pesticide Poisoning", room: "GARDEN" },
+                { name: "Slip and fall", room: "BATHROOM" },
+                { name: "TV damage", room: "LIVING-ROOM" }
+            ];
+            
+            threatMapping.forEach(threat => {
+                const id = threat.name.toUpperCase().replace(/\s/g, '-');
+                
+                const label = document.createElement('div');
+                label.id = id;
+                label.className = 'draggable-label';
+                label.setAttribute('draggable', 'true');
+                label.textContent = threat.name.toUpperCase();
+                labelTray.appendChild(label);
+            });
+            
+            // 4. Update Map Areas to reflect expected Step 2 placement
+            mapAreas.forEach(area => {
+                const roomName = area.getAttribute('alt').toUpperCase().replace(/\s/g, '-');
+                // The required label is now the threat ID, based on the room name
+                if (step2Answers[roomName]) {
+                    area.setAttribute('data-required-label', step2Answers[roomName]);
+                }
+            });
+
+            // 5. Reinitialize drag listeners for the new labels
+            setupDragListeners();
+        }
+
+        function completeStep2() {
+            const instructionContent = document.getElementById('instruction-content');
+            
+            // Replace instructions with success message and link
+            instructionContent.innerHTML = `
+                <h2>🎉 Mission Complete: Threats Identified!</h2>
+                <p>Outstanding work! You have successfully completed **Step 2: Identify Threats** by mapping the most likely dangers to the relevant areas of the home. This completes the "T" phase of STRIDE.</p>
+                <p>The final step is to minimize or eliminate these risks.</p>
+                <p><a href="#" id="start-step3-button" style="display: block; padding: 10px; background-color: #00ffff; color: #1a1a1a; text-align: center; border-radius: 5px; margin-top: 15px; text-decoration: none; font-weight: bold;">GO TO STEP 3: IDENTIFY CONTROLS</a></p>
+            `;
+            
+            // Attach event listener to the new button
+            document.getElementById('start-step3-button').addEventListener('click', (e) => {
+                e.preventDefault();
+                initStep3();
+            });
+        }
+        
+        function initStep3() {
+            currentStep = 3;
+            const instructionContent = document.getElementById('instruction-content');
+
+            // 1. Update Instructions for Step 3
+            instructionContent.innerHTML = `
+                <h2>🚨 Step 3: Identify Controls (Mitigation)!</h2>
+                <p>Welcome to the final phase! We move from identifying dangers to implementing defenses. A **Control** (or countermeasure) is any action, device, or procedure that reduces a threat.</p>
+                
+                <h3>🎯 Task: Place the Controls!</h3>
+                <p>Your task is to drag the most **appropriate control** from the tray and drop it onto the **specific threat** already placed on the floor plan that it is designed to mitigate. (Note: Only one control is correct per threat).</p>
+                <ul>
+                    <li>**Correct Controls** (5) will eliminate or limit the impact of the risk.</li>
+                    <li>**Inappropriate Controls** (2) should not be used.</li>
+                </ul>
+            `;
+
+            // 2. Clear the label tray and add new controls
+            while (labelTray.firstChild) {
+                labelTray.removeChild(labelTray.firstChild);
+            }
+
+            // 3. Define the new control labels
+            const controlMapping = [
+                // Appropriate Controls (5)
+                { name: "Smart Alarm Clock", type: "appropriate" }, // Oversleeping
+                { name: "Smoke Detector", type: "appropriate" },    // Cooking Fire
+                { name: "Locked Cabinet", type: "appropriate" },    // Pesticide Poisoning
+                { name: "Non-slip Mats", type: "appropriate" },     // Slip and fall
+                { name: "Surge Protector", type: "appropriate" },   // TV damage
+                // Inappropriate Controls (2)
+                { name: "Barbed Wire", type: "inappropriate" },     
+                { name: "Extra Insurance", type: "inappropriate" }, 
+            ];
+
+            controlMapping.forEach(control => {
+                const id = control.name.toUpperCase().replace(/\s/g, '-');
+                
+                const label = document.createElement('div');
+                label.id = id;
+                // Add control-label class for visual distinction (cyan color)
+                label.className = 'draggable-label control-label'; 
+                label.setAttribute('draggable', 'true');
+                label.textContent = control.name.toUpperCase();
+                // Add the control type for potential future validation/feedback
+                label.dataset.type = control.type;
+                labelTray.appendChild(label);
+            });
+
+            // 4. Update Map Areas to reflect expected Step 3 placement
+            // The map areas currently have the THREAT ID (e.g., OVERSLEEPING) as their data-required-label.
+            // This is perfect, as the required label in step 3 IS the threat ID.
+            // The validation (checkPlacement) will now check if the dropped label ID (the control) matches the
+            // expected control in the step3Answers object using the required-label (the threat ID).
+
+            // 5. Reset all existing threat labels on the floor plan to be movable again 
+            // and clear their placement status to prepare for new control labels to be placed on top.
+            // Important: We need the threat labels to remain visually on the map but NOT be draggable by the user.
+            // Instead, the drop zone areas are now the target.
+            
+            // To ensure only the new controls are draggable, we don't re-run setupDragListeners, 
+            // but we ensure the old labels are static.
+            document.querySelectorAll('#diagram-container .draggable-label').forEach(label => {
+                if (label.parentElement.id !== 'label-tray') {
+                    // Remove all drag-related properties from the old, correctly placed threat labels
+                    label.setAttribute('draggable', 'false');
+                    label.style.cursor = 'default';
+                    label.classList.remove('draggable-label'); // Remove the class to stop drag listeners from picking it up
+                }
+            });
+            
+            // Re-run setupDragListeners to apply handlers ONLY to the new labels in the tray
+            setupDragListeners();
+        }
+        
+        // Ensure initial drag listeners are set up
+        setupDragListeners();
+    </script>
+</body>
+</html>

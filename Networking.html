@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>University of Lancashire : Networking Fundamentals</title>
+    <style>
+        /* CSS from binary_demonstration.html */
+        :root{
+            --bg:#1a1a2e;
+            --panel:#0f0f1b;
+            --accent:#00ff00; 
+            --muted:#ccc;
+            --gold:#ffaa00; 
+        }
+        html,body{
+            height:100%; 
+            margin:0; 
+            background:var(--bg); 
+            color:#e0e0e0; 
+            font-family: "Courier New", Courier, monospace;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            color: var(--gold);
+            font-size: 3.2em;
+            
+            text-shadow: 0 0 5px rgba(255, 170, 0, 0.3);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            margin-bottom: 40px;
+        }
+        
+        h2 {
+            color: var(--accent);
+            font-size: 1.5em;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            border-left: 3px solid var(--accent); 
+            padding-left: 10px;
+        }
+        
+        .inline-code {
+            background: #000; 
+            padding: 10px; 
+            border-radius: 4px; 
+            display: inline-block; 
+            margin-top: 5px; 
+            font-size: 1.1em; 
+            color: var(--accent);
+        }
+
+        .highlight-bold {
+            color: var(--gold); 
+            font-weight: bold;
+        }
+
+        /* Re-use button style for next stage link */
+        .next-button {
+            text-decoration: none;
+            background: var(--accent);
+            color: var(--bg); 
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1.2em;
+            display: inline-block;
+            transition: background 0.2s, transform 0.2s;
+            text-shadow: none;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+            margin-top: 40px;
+        }
+
+        .next-button:hover {
+            background: #4bff4b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 255, 0, 0.6);
+        }
+
+        /* key concept  */
+        .analogy-box {
+            background: var(--panel);
+            border-left: 5px solid var(--gold);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 4px;
+        }
+
+        /* Image float style */
+        .intro-image {
+            float: left; 
+            width: 150px; 
+            height: auto;
+            margin-right: 20px; 
+            margin-bottom: 10px; 
+            padding-top: 5px; 
+        }
+
+        /* Network Diagram Image Style */
+        .network-diagram-image {
+            float: right;
+            width: 350px; 
+            height: auto;
+            margin-right: 20px;
+            margin-bottom: 10px;
+        }
+        
+        /*floating content -  positioned correctly */
+        .clear-float {
+            clear: both;
+        }
+        
+        
+        .subnet-demonstrator {
+            background: var(--panel);
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 170, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.15);
+            margin-top: 20px;
+        }
+
+        
+        #subnet-icons-container {
+            width: 100%;
+            min-height: 50px; 
+            padding: 10px 0;
+            margin-top: 15px; 
+            border-radius: 4px;
+            text-align: center; 
+        }
+        
+        /* Inner container  */
+        #icon-flex-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; 
+            align-content: flex-start;
+            padding: 0 10px; 
+        }
+
+        .network-icon { 
+            display: inline-block;
+            font-size: 1.5em; 
+            margin: 5px 10px;
+            cursor: help; 
+            text-align: center;
+            line-height: 1;
+        }
+        
+        .network-icon span {
+            display: block;
+        }
+        
+        .icon-label {
+            font-size: 0.7em;
+            color: var(--muted);
+            margin-top: -5px;
+            display: block;
+        }
+
+       
+
+        .input-row {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .input-row h3 {
+            color: var(--muted);
+            font-size: 1em;
+            margin: 0 15px 0 0;
+            white-space: nowrap;
+        }
+        
+        #cidr-slider {
+            width: 200px; 
+        }
+
+        .output-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 columns */
+            gap: 20px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .result-box {
+            border: 1px solid rgba(255, 170, 0, 0.3);
+            padding: 15px 5px;
+            border-radius: 4px;
+            background: rgba(255, 170, 0, 0.05);
+        }
+
+        .result-box h4 {
+            color: var(--gold) !important;
+            border-bottom: 1px solid var(--gold);
+            padding-bottom: 5px;
+            margin-top: 0;
+            font-size: 1.1em;
+        }
+
+        .decimal-result {
+            font-size: 1.5em; 
+            font-weight: bold;
+            color: var(--gold);
+            padding-bottom: 5px;
+        }
+
+        .binary-result {
+            font-size: 0.9em;
+            color: var(--accent);
+            word-break: break-all;
+        }
+        
+        #subnet-ranges-output {
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+        
+       
+        .subnet-summary-line {
+             color: var(--muted); 
+             font-size: 0.9em; 
+             margin: 10px 0 0 10px; 
+             width: 100%;
+             text-align: center; 
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>> NETWORKING FUNDAMENTALS: IP ADDRESSING</h1>
+
+        <img src="Internet.png" alt="Neon internet graphic" class="intro-image">
+        
+        <p>
+            The internet is simply a massive collection of computers sending <span class="highlight-bold">electrical signals</span> back and forth. Because computer hardware only understands the two states of <span class="highlight-bold">ON (1)</span> or <span class="highlight-bold">OFF (0)</span> (Binary), every piece of data, from a text message to a video file, must be represented in binary.
+        </p>
+        <p>
+            For these messages to reach the correct destination, every device on a network needs a unique identifier—its <span class="highlight-bold">Internet Protocol (IP) Address</span>. Just like data, this address must also be expressed entirely in binary.
+        </p>
+        
+        <hr class="clear-float" style="border-color: rgba(255, 255, 255, 0.1); margin: 40px 0;">
+
+      
+        <h2>Network ID vs. Host ID</h2>
+                
+        <img src="Network.png" alt="Neon line diagram of a network with devices and IP addresses" class="network-diagram-image">
+
+                <p>
+                    An IP address has two critical functions rolled into one. It must tell the internet both: 
+                    <ol>
+                        <li>Which <span class="highlight-bold">network</span> the device belongs to.</li>
+                        <li>Which <span class="highlight-bold">specific device</span> is on that network.</li>
+                    </ol>
+                    The entire 32-bit binary IP address is split into these two logical sections: the <span class="highlight-bold">Network ID</span> and the <span class="highlight-bold">Host ID</span>.
+                     <p style="margin-top: 0;">
+                        Think of it like a mailing address:
+                    </p>
+                    <ul>
+                        <li>The <span class="highlight-bold">Network ID</span> is the <span class="highlight-bold">Street Name and Town</span>. It routes the data to the correct local area.</li>
+                        <li>The <span class="highlight-bold">Host ID</span> is the <span class="highlight-bold">House Number</span>. It identifies the one device (your PC or phone) that should receive the data.</li>
+                    </ul>
+                </p>
+                
+                       
+
+
+        <h2>Dividing your network</h2>
+        <p>
+            Imagine your network address (<span class="highlight-bold">192.168.0.0</span>) is a big plot of land. We use <span class="highlight-bold">subnetting</span> to divide this land into smaller, separate <span class="highlight-bold">neighbourhoods</span>. Adjust the slider below to change the <span class="highlight-bold">subnet mask</span> and you will see the number of divided networks possible and the number of computers (<span class="highlight-bold">Hosts</span>) and create new <span class="highlight-bold">neighbourhoods</span> (<span class="highlight-bold">Subnets</span>).
+            <br>The golden rule is: <span class="highlight-bold">The more neighbourhoods you create, the smaller each neighbourhood gets!</span>
+        </p>
+        
+        
+        <div class="subnet-demonstrator">
+            
+            <div class="input-row">
+                <h3 style="margin-right: 20px;">Adjust the subnet mask (/n):</h3>
+                <input type="range" min="24" max="30" value="24" id="cidr-slider" oninput="calculateSubnets()">
+                <span id="cidr-display" class="highlight-bold" style="font-size: 1.5em; color: var(--accent); margin-left: 10px;">/24</span>
+            </div>
+            
+            <div class="output-grid">
+                <div class="result-box">
+                    <h4>Subnet Mask</h4>
+                    <div id="subnet-mask-output" class="decimal-result">255.255.255.0</div>
+                    <div id="subnet-mask-binary" class="binary-result">11111111.11111111.11111111.00000000</div>
+                </div>
+
+                <div class="result-box">
+                    <h4>Host Bits Borrowed (n-24)</h4>
+                    <div id="borrowed-bits-output" class="decimal-result" style="color: var(--accent);">0</div>
+                </div>
+
+                <div class="result-box">
+                    <h4>Total Subnets Available (2^n)</h4>
+                    <div id="subnets-available-output" class="decimal-result" style="color: var(--gold);">1</div>
+                </div>
+                
+                <div class="result-box">
+                    <h4>Usable Hosts Per Subnet (2^m - 2)</h4>
+                    <div id="hosts-per-subnet-output" class="decimal-result">254</div>
+                </div>
+            </div>
+
+            <div id="subnet-icons-container">
+                <div style="color: var(--gold); font-weight: bold; width: 100%; margin: 15px 0 5px 0; border-top: 1px solid rgba(255, 170, 0, 0.1); padding-top: 15px;">Subnets Created)</div>
+                <div id="icon-flex-wrapper">
+                    </div>
+            </div>
+            
+            <h3 style="margin-top: 30px; color: var(--accent);">Example Subnet Ranges (The Neighbourhoods):</h3>
+            <pre id="subnet-ranges-output" style="background: #000; padding: 15px; border-radius: 4px; overflow-x: auto; color: var(--muted);">192.168.0.0 (Network ID) to 192.168.0.255 (Broadcast ID) - 254 hosts.</pre>
+        </div>
+
+        
+
+        <div style="background: var(--panel); padding: 20px; border-radius: 4px; margin-bottom: 20px; border-left: 5px solid var(--accent);">
+            <h3 style="color: var(--accent); margin-top: 0;">What the Numbers Mean:</h3>
+            <ul>
+                <li><strong>Subnet Mask:</strong> The **fence** (`/n` value) that defines where one network segment ends and the next begins.</li>
+                <li><strong>Host Bits Borrowed:</strong> The number of bits taken from the **Host ID** to create new subnets.</li>
+                <li><strong>Total Subnets Available:</strong> The total number of new **neighbourhoods** you have created.</li>
+                <li><strong>Usable Hosts Per Subnet:</strong> The count of devices (PCs/phones) that can fit in each subnet. (Total addresses minus 2 for the Network ID and Broadcast ID).</li>
+            </ul>
+        </div>
+       
+        <div style="text-align: center;">
+            <a href="Networking2.html" class="next-button">
+                > NEXT: MORE NETWORKING EXERCISES <
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // Mapping of CIDR prefix to  mask in decimal
+        const cidrToMask = {
+            24: "255.255.255.0",
+            25: "255.255.255.128",
+            26: "255.255.255.192",
+            27: "255.255.255.224",
+            28: "255.255.255.240",
+            29: "255.255.255.248",
+            30: "255.255.255.252"
+        };
+        
+        // Helper function to convert a decimal octet (0-255) to 8-bit binary string
+        function dec2bin(dec) {
+            return (dec >>> 0).toString(2).padStart(8, '0');
+        }
+        
+        // Function to calculate and display subnet information
+        function calculateSubnets() {
+            const cidr = parseInt(document.getElementById('cidr-slider').value);
+            document.getElementById('cidr-display').textContent = `/${cidr}`;
+
+            // --- 1. Subnet Mask Calculations ---
+            const maskDecimal = cidrToMask[cidr];
+            const maskOctets = maskDecimal.split('.').map(Number);
+            let maskBinary = maskOctets.map(dec2bin).join('.');
+            
+            document.getElementById('subnet-mask-output').textContent = maskDecimal;
+            document.getElementById('subnet-mask-binary').textContent = maskBinary;
+
+           
+            const borrowedBits = cidr - 24;
+            const hostBits = 32 - cidr;
+
+            const subnetsAvailable = Math.pow(2, borrowedBits);
+          
+            const hostsPerSubnet = hostBits >= 2 ? Math.pow(2, hostBits) - 2 : (hostBits === 1 || hostBits === 0 ? 0 : 0);
+
+            document.getElementById('borrowed-bits-output').textContent = borrowedBits;
+            document.getElementById('subnets-available-output').textContent = subnetsAvailable;
+            document.getElementById('hosts-per-subnet-output').textContent = hostsPerSubnet;
+            
+      
+            let rangesOutput = "";
+            let subnetSize = Math.pow(2, hostBits);
+            const numExamples = Math.min(subnetsAvailable, 8); // Show max 8 
+            
+            for (let i = 0; i < numExamples; i++) {
+                const networkID = i * subnetSize;
+                const broadcastID = networkID + subnetSize - 1;
+                
+                let line = `Subnet ${i}: 192.168.0.${networkID} (Network ID) to 192.168.0.${broadcastID} (Broadcast ID) - ${hostsPerSubnet} hosts.`;
+
+            
+                if (cidr === 24) {
+                    rangesOutput = `192.168.0.0 (Network ID) to 192.168.0.255 (Broadcast ID) - 254 hosts.`;
+                    break;
+                }
+                
+                rangesOutput += line + '\n';
+            }
+
+            document.getElementById('subnet-ranges-output').textContent = rangesOutput.trim();
+
+      
+            const iconWrapper = document.getElementById('icon-flex-wrapper');
+      
+            iconWrapper.innerHTML = '';
+            
+            const maxIcons = 16; // Visual limit is 16
+            const numIconsToDraw = Math.min(subnetsAvailable, maxIcons);
+            
+            let iconHTML = '';
+            
+            if (subnetsAvailable === 1) {
+                // Special case for /24
+                iconHTML += `<div class="subnet-summary-line" style="margin-left: 0;">The entire range is one network.</div>`;
+            } else {
+                for (let i = 0; i < numIconsToDraw; i++) {
+                    let iconColor;
+                    
+                    if (i === 0) {
+                        // The very first network is always Gold (Original)
+                        iconColor = 'var(--gold)';
+                    } else if (i % 2 === 1) {
+                        // All odd-indexed subnets (1, 3, 5, etc.) are Accent Green
+                        iconColor = 'var(--accent)';
+                    } else {
+                        // All even-indexed subnets (2, 4, 6, etc.) are Gold
+                        iconColor = 'var(--gold)';
+                    }
+                    
+                  
+                    iconHTML += `<div class="network-icon" title="Subnet ${i + 1}" style="color: ${iconColor};">🖧<span class="icon-label">#${i + 1}</span></div>`;
+                }
+
+                if (subnetsAvailable > maxIcons) {
+                  
+                    iconHTML += `<div class="subnet-summary-line" style="margin-top: 10px;">+ ${subnetsAvailable - maxIcons} more networks created (Total: ${subnetsAvailable})...</div>`;
+                }
+            }
+
+            iconWrapper.innerHTML += iconHTML;
+        }
+
+   
+        document.addEventListener('DOMContentLoaded', calculateSubnets);
+    </script>
+</body>
+</html>

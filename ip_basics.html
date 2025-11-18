@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>University of Lancashire : IP & Subnetting Basics (Non-Technical)</title>
+    <style>
+        /* Variables from the original style */
+        :root{
+            --bg:#1a1a2e;
+            --panel:#0f0f1b;
+            --accent:#00ff00; /* Bright Green */
+            --muted:#ccc;
+            --gold:#ffaa00; /* Orange/Gold */
+        }
+        html,body{
+            height:100%; 
+            margin:0; 
+            background:var(--bg); 
+            color:#e0e0e0; 
+            font-family: "Courier New", Courier, monospace;
+        }
+
+        /* === TOP TABS NAV === */
+        .top-nav {
+            display:flex;
+            gap:8px;
+            align-items:center;
+            padding:10px 16px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.12), transparent);
+            border-bottom:1px solid rgba(255,255,255,0.02);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .tabs {
+            display:flex;
+            gap:6px;
+            align-items:center;
+            flex-wrap: wrap;
+        }
+        .tab {
+            display:inline-block;
+            padding:8px 14px;
+            border-radius:8px;
+            color: #e9ffe9;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.2s, color 0.2s;
+            border: 1px solid transparent;
+            font-size: 0.9em;
+        }
+        .tab:hover {
+            background-color: rgba(0, 255, 0, 0.05);
+            color: var(--accent);
+        }
+        .tab.current {
+            background-color: var(--accent);
+            color: var(--panel); 
+            pointer-events: none;
+            border: 1px solid var(--accent);
+        }
+        
+        /* === PAGE LAYOUT === */
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .header {
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+        }
+        .header img { 
+            height: 60px; 
+            width: auto;
+        }
+        h1 {
+            color: var(--gold);
+            font-size: 2.2em;
+            text-shadow: 0 0 5px rgba(255, 170, 0, 0.3);
+            margin: 0;
+        }
+        h2 {
+            color: var(--accent);
+            font-size: 1.5em;
+            margin-top: 40px;
+            /* REMOVED: border-left and padding-left to allow the flex container to handle alignment */
+        }
+        
+        /* NEW STYLES FOR ALIGNMENT */
+        .h2-container {
+            display: flex; /* Enable flexbox for horizontal alignment */
+            align-items: center; /* Vertically align items in the center */
+            gap: 15px; /* Space between the image and the text */
+            margin-top: 40px; /* Preserve top margin */
+            border-left: 3px solid var(--accent); /* Re-added the style visually */
+            padding-left: 10px;
+        }
+        .h2-container img {
+            height: 30px; /* Small size for the icon */
+            width: auto;
+            /* The image now sits to the left of the h2 text */
+            margin-top: -5px; /* Adjust vertical position slightly */
+        }
+        /* END NEW STYLES */
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 1.0em;
+        }
+
+        /* === CONCEPT BLOCKS & CODE EXAMPLES === */
+        .concept-block {
+            background: var(--panel);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.1);
+        }
+        .concept-block h3 {
+            color: var(--gold);
+            margin-top: 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+        .code-example {
+            background: #000;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-size: 1.1em;
+            color: var(--accent);
+            white-space: pre-wrap;
+        }
+        .network-part { color: var(--gold); font-weight: bold; }
+        .host-part { color: var(--accent); font-weight: bold; }
+
+        /* === INTERACTIVE STYLING (NEW) === */
+        .interactive-task {
+            padding: 30px;
+            background: rgba(255, 170, 0, 0.05); /* Gold background for task */
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            margin-top: 50px;
+        }
+        .task-button {
+            padding: 10px 20px;
+            background-color: var(--gold);
+            color: var(--panel);
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            margin-right: 10px;
+        }
+        .task-button:hover {
+            background-color: var(--panel);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+        }
+        .network-sim {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed var(--muted);
+            min-height: 100px;
+        }
+        .sim-device {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 5px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            cursor: default;
+        }
+        .same-net { background-color: rgba(0, 255, 0, 0.2); border: 1px solid var(--accent); }
+        .diff-net { background-color: rgba(255, 0, 0, 0.2); border: 1px solid red; }
+        .device-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 4px;
+        }
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .toggle-label {
+            margin-right: 10px;
+            color: var(--gold);
+        }
+        .slider {
+            width: 50px;
+            height: 26px;
+            background: #ccc;
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.4s;
+        }
+        .slider:before {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--panel);
+            top: 4px;
+            left: 4px;
+            transition: transform 0.4s, background 0.4s;
+        }
+        .slider.on {
+            background-color: var(--accent);
+        }
+        .slider.on:before {
+            transform: translateX(24px);
+            background: var(--panel);
+        }
+        img {
+        width: 20%; 
+        height: 20%; /* Ensures the aspect ratio remains correct */
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <div class="tabs">
+            <a href="index.html" class="tab">0. Introduction</a>
+            <a href="ip_basics_v3.html" class="tab current">IP & Subnetting</a>
+            <a href="detective.html" class="tab">1. Level 1 Incident</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <img src="university_of_lancashire_logo.png" alt="University of Lancashire Logo">
+            <h1>> NETWORK FUNDAMENTALS: ADDRESSES & NETWORK BLOCKS</h1>
+        </div>
+        
+        <div class="h2-container">
+            
+            <h2>[I] What is a Digital Address? 🏠</h2>
+        </div>
+        
+        <p>
+            A **Digital Address** (or IP Address) is the unique numerical label for every device on a network. It acts like a **street address** for your computer, ensuring data packets always reach the correct destination.
+        </p>
+
+        <div class="concept-block">
+            <h3>Structure: Four Number Groups</h3>
+            <p>
+                Every address we'll deal with is composed of **four number groups** separated by dots.
+            </p>
+            <div class="code-example">
+                <span class="network-part">192 . 168 . 1</span> . <span class="host-part">10</span> 
+                <br>
+                (Group 1) . (Group 2) . (Group 3) . (Group 4)
+            </div>
+        </div>
+
+        <h2>[II] The Network Mask: The Boundary Fence 🚧</h2>
+        <p>
+            Think of the **Digital Address** as a full phone number: **(Area Code) - (Local Exchange) - (Extension)**.
+        </p>
+        <p>
+            The **Network Mask** is the rule that tells the network which part is the **"Area Code"** (the shared Network Block) and which part is the **"Extension"** (the unique Device ID).
+        </p>
+
+        <div class="concept-block">
+            <h3>Example: The Key to the Network</h3>
+            <p>
+                The most common mask is **255.255.255.0**.
+                Any number group covered by a **255** is the non-negotiable **Network Block ID**. Any number group covered by a **0** is the unique **Device ID**.
+            </p>
+            <p>
+                This mask creates a clear separation, acting like a fence line:
+            </p>
+            <div class="code-example">
+                [--- NETWORK BLOCK ID ---]  .  [--- DEVICE ID ---]
+
+                **IP Address:** <span class="network-part">192 . 168 . 1</span> . <span class="host-part">10</span>
+                **Network Mask:** 255 . 255 . 255 . 0 
+            </div>
+            <p>
+                All devices in the same office or department must share the same **192.168.1** Network Block to talk directly.
+            </p>
+        </div>
+
+        <div class="interactive-task">
+            <h2>[III] INTERACTIVE TASK: Connectivity Check 📡</h2>
+            <p>
+                In a security incident, knowing network boundaries is key. Devices must share the same **Network Block ID** to talk directly. Use the switch to change the network size, then click a device to see if it can reach the target.
+            </p>
+            
+            <div class="toggle-switch">
+                <div class="toggle-label">Mask $255.255.255.0$ (3 Locks: Small Network)</div>
+                <div class="slider on" id="mask-toggle" onclick="toggleMask()"></div>
+            </div>
+
+            <div class="network-sim">
+                <p><strong>Click a device to see if it can reach the Target Device:</strong></p>
+                <div class="sim-device same-net" data-ip="192.168.1.10" onclick="checkConnectivity('192.168.1.10')">Server (192.168.1.10)</div>
+                <div class="sim-device same-net" data-ip="192.168.1.150" onclick="checkConnectivity('192.168.1.150')">Workstation (192.168.1.150)</div>
+                <div class="sim-device diff-net" data-ip="192.168.2.5" onclick="checkConnectivity('192.168.2.5')">Printer (192.168.2.5)</div>
+                <div class="sim-device same-net" data-ip="192.168.1.1" onclick="checkConnectivity('192.168.1.1')">Gateway/Router (192.168.1.1)</div>
+            </div>
+            
+            <div class="device-info">
+                <strong>Target Network Block:</strong> <span id="target-net">192.168.1.x</span> (3 locks)<br>
+                <strong>Device IP:</strong> <span id="device-ip">---</span><br>
+                <strong>Connectivity Status:</strong> <span id="connectivity-status" style="font-weight: bold;">---</span>
+            </div>
+        </div>
+
+        <div class="interactive-task" style="margin-top: 30px;">
+            <h2>[IV] INTERACTIVE TASK: Highlighting the Network Block 🔑</h2>
+            <p>
+                Hover your mouse over the IP addresses below. The mask $255.255.255.0$ will be used to highlight the **Network Block ID** (Gold) and the **Device ID** (Green).
+            </p>
+            <div class="code-example">
+                <span id="ip-hover-1" onmouseover="showParts('192.168.1.5', 3)" onmouseout="resetParts('192.168.1.5')">192.168.1.5</span> (Campus Server)<br>
+                <span id="ip-hover-2" onmouseover="showParts('10.0.0.99', 1)" onmouseout="resetParts('10.0.0.99')">10.0.0.99</span> (Research Lab Device)
+            </div>
+            <p id="lock-feedback" style="margin-top: 15px; color: var(--muted);">Hover over an IP address above.</p>
+        </div>
+
+
+    </div>
+
+    <script>
+        let is24Mask = true; // Assumes a standard /24 mask (255.255.255.0)
+        const targetNetwork24 = "192.168.1";
+        const targetNetwork16 = "192.168"; // For the larger mask (255.255.0.0)
+
+        function toggleMask() {
+            is24Mask = !is24Mask;
+            const toggle = document.getElementById('mask-toggle');
+            const toggleLabel = document.querySelector('.toggle-switch .toggle-label');
+            const targetNetSpan = document.getElementById('target-net');
+
+            if (is24Mask) {
+                toggle.classList.add('on');
+                toggleLabel.textContent = 'Mask 255.255.255.0 (3 Locks: Small Network)';
+                targetNetSpan.textContent = '192.168.1.x (3 locks)';
+            } else {
+                toggle.classList.remove('on');
+                toggleLabel.textContent = 'Mask 255.255.0.0 (2 Locks: Large Network)';
+                targetNetSpan.textContent = '192.168.x.x (2 locks)';
+            }
+            // Reset status when mask changes
+            document.getElementById('device-ip').textContent = '---';
+            document.getElementById('connectivity-status').textContent = '---';
+        }
+
+        function checkConnectivity(deviceIP) {
+            const ipParts = deviceIP.split('.');
+            let networkID;
+            let targetID;
+
+            if (is24Mask) {
+                // Network is the first 3 parts
+                networkID = ipParts.slice(0, 3).join('.');
+                targetID = targetNetwork24;
+            } else {
+                // Network is the first 2 parts
+                networkID = ipParts.slice(0, 2).join('.');
+                targetID = targetNetwork16;
+            }
+
+            document.getElementById('device-ip').textContent = deviceIP;
+
+            const statusSpan = document.getElementById('connectivity-status');
+
+            if (networkID === targetID) {
+                statusSpan.style.color = 'var(--accent)';
+                statusSpan.textContent = `CAN CONNECT! The Network Block ID (${networkID}) matches the target block.`;
+            } else {
+                statusSpan.style.color = 'var(--gold)';
+                statusSpan.textContent = `CANNOT CONNECT. The Network Block ID (${networkID}) is different. A Router is needed!`;
+            }
+        }
+
+        // --- Second Interactive Task (Hover) ---
+
+        function showParts(ip, assumedNetworkParts) {
+            const ipElement = document.getElementById(`ip-hover-${ip === '192.168.1.5' ? 1 : 2}`);
+            const parts = ip.split('.');
+            const feedback = document.getElementById('lock-feedback');
+            
+            // Build the HTML with colored spans
+            let html = parts.map((part, index) => {
+                if (index < assumedNetworkParts) {
+                    return `<span class="network-part">${part}</span>`;
+                } else {
+                    return `<span class="host-part">${part}</span>`;
+                }
+            }).join('.');
+            
+            ipElement.innerHTML = html;
+            
+            feedback.style.color = 'var(--accent)';
+            if (assumedNetworkParts === 3) {
+                feedback.innerHTML = 'Assumed Mask: $255.255.255.0$ (3 locks). The first three numbers are the **Network Block ID** (Gold). The last number is the unique **Device ID** (Green).';
+            } else if (assumedNetworkParts === 1) {
+                feedback.innerHTML = 'Assumed Mask: $255.0.0.0$ (1 lock). Only the first number is the **Network Block ID** (Gold). The remaining numbers are the unique **Device ID** (Green).';
+            }
+        }
+
+        function resetParts(ip) {
+            const ipElement = document.getElementById(`ip-hover-${ip === '192.168.1.5' ? 1 : 2}`);
+            ipElement.innerHTML = ip;
+            const feedback = document.getElementById('lock-feedback');
+            feedback.style.color = 'var(--muted)';
+            feedback.innerHTML = 'Hover over an IP address above.';
+        }
+    </script>
+</body>
+</html>

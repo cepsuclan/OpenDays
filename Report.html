@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Forensics: Final Incident Report</title>
+    <style>
+        :root{
+            --bg:#1a1a2e;
+            --panel:#0f0f1b;
+            --accent:#00ff00;
+            --muted:#ccc;
+            --gold:#ffaa00;
+        }
+        .top-nav {
+                    display:flex; gap:8px; align-items:center; padding:10px 16px;
+                    background: linear-gradient(180deg, rgba(0,0,0,0.12), transparent);
+                    border-bottom:1px solid rgba(255,255,255,0.02); position: sticky; top: 0; z-index: 50;
+                }
+                .tabs { display:flex; gap:6px; align-items:center; }
+                .tab {
+                    display:inline-block; padding:8px 14px; border-radius:8px; color: #ffe9cc; text-decoration:none;
+                    background: transparent; border: 1px solid rgba(255,170,0,0.2); transition: background 160ms, transform 120ms;
+                    font-weight:600; font-size:0.95rem;
+                }
+                .tab:hover{ transform: translateY(-2px); background: rgba(255,170,0,0.04); }
+                .tab.active{
+                    background: var(--gold); color: #1a1a2e;
+                    box-shadow: 0 6px 18px rgba(255,170,0,0.12);
+                }
+                .brand { margin-left: auto; font-size:0.95rem; color: var(--muted); }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+        }
+        .report-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #0f0f1b;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+        h1 {
+            color: #ff3366;
+            border-bottom: 3px solid #ff3366;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        /* Style for Collapsible Headings */
+        .collapsible-header {
+            color: #00ffcc;
+            border-bottom: 1px solid #00ffcc;
+            padding-bottom: 5px;
+            margin-top: 30px;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+        }
+        /* Style for content hidden by default */
+        .collapsible-content {
+            display: none;
+            padding-left: 20px;
+            border-left: 2px solid #ff3366;
+            margin-left: 10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        .collapsible-header:hover {
+            opacity: 0.8;
+        }
+        .toggle-arrow {
+            margin-right: 10px;
+            font-size: 0.8em;
+            color: #ff3366;
+            transition: transform 0.2s;
+        }
+        /* Content specifics */
+        .report-details {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #15152a;
+            border-radius: 8px;
+        }
+        .report-details strong {
+            color: #00ffcc;
+            font-weight: normal;
+        }
+        .report-details p {
+            margin-bottom: 8px;
+        }
+        .report-details ul {
+            list-style: square;
+            margin-left: 20px;
+        }
+        .key-finding {
+            font-weight: bold;
+            color: #ffaa00;
+        }
+        .log-entry {
+            background-color: #2a2a44;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 5px solid #ff3366;
+            white-space: pre-wrap;
+            font-size: 0.9em;
+        }
+        .remediation-plan ol {
+            padding-left: 25px;
+        }
+        .remediation-plan li {
+            margin-bottom: 15px;
+            color: #a9ffb4;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-nav" role="navigation" aria-label="Primary">
+    <div class="tabs" role="tablist" aria-label="Main tabs">
+        <a href="detective.html" class="tab" role="tab" aria-selected="false">Level 1 Dashboard</a>
+        <a href="Report.html" class="tab active" role="tab" aria-selected="true">Level 1 Report</a>
+        <a href="detective2.html" class="tab" role="tab" aria-selected="false">Level 2 Dashboard</a>
+        <a href="Report2.html" class="tab" role="tab" aria-selected="false">Level 2 Report</a>
+        <a href="Breach Sim.html" class="tab" role="tab" aria-selected="false">Breach Sim</a>
+    </div>
+    <div class="brand">University of Lancashire — Training</div>
+</div>
+
+<div class="report-container">
+    <h1>Digital Forensics Incident Report - Level 1 Findings</h1>
+    
+    <div class="report-details">
+        <p><strong>Incident Date:</strong> 2024-10-25</p>
+        <p><strong>Report Date:</strong> <span id="report-date-body">25/10/2024</span></p>
+        <p><strong>Report Date (Header):</strong> <span id="report-date-header">25/10/2024</span></p>
+        <p><strong>Investigator:</strong> You </p>
+        <p><strong>Incident Summary:</strong> Unauthorized external access to an internal Jump Host, followed by lateral movement to an RDP server and subsequent exfiltration of confidential financial data.</p>
+    </div>
+
+    <div id="findings" class="collapsible-header" onclick="toggleSection('findings-content', this)">
+        <span class="toggle-arrow">&#9658;</span><h2>Key Findings (Evidence Chain)</h2>
+    </div>
+    <div id="findings-content" class="collapsible-content">
+        
+        <h3>1. Initial Access (External Intrusion)</h3>
+        <p>The attacker first gained a foothold by successfully connecting from an external IP address to an internal host.</p>
+        <div class="log-entry">
+            <strong>Time:</strong> 18:00:40 | <strong>Source:</strong> 172.55.9.123 | <strong>Target:</strong> 192.168.1.100 | <strong>Action:</strong> Remote desktop login (successful) to Jump Host (user 'admin_tool')
+        </div>
+        <ul>
+            <li><span class="key-finding">Attacker IP (External):</span> 172.55.9.123</li>
+            <li><span class="key-finding">Compromised Host (Jump Host):</span> 192.168.1.100</li>
+            <li><span class="key-finding">Exploited Credential:</span> The credential for user 'admin_tool' was successfully used.</li>
+        </ul>
+
+        <h3>2. Lateral Movement</h3>
+        <p>From the Jump Host, the attacker immediately performed network discovery ('net use') and then moved to a secondary server.</p>
+        <div class="log-entry">
+            <strong>Time:</strong> 18:00:50 | <strong>Source:</strong> 192.168.1.100 | <strong>Target:</strong> 192.168.1.250 | <strong>Action:</strong> RDP Session Initiation (User: 'admin_tool')
+        </div>
+        <ul>
+            <li><span class="key-finding">Lateral Target (RDP Server):</span> 192.168.1.250</li>
+            <li>The RDP server was then used to stage the target file, 'Q1_P&L_Final.zip', before exfiltration.</li>
+        </ul>
+
+        <h3>3. Data Exfiltration (Theft)</h3>
+        <p>The attacker then sent the stolen data back to their external IP address from the Jump Host (192.168.1.100).</p>
+        <div class="log-entry">
+            <strong>Time:</strong> 18:01:30 | <strong>Source:</strong> 192.168.1.100 | <strong>Target:</strong> 172.55.9.123 | <strong>Action:</strong> Large outbound file transfer: Q1_P&L_Final.zip (25 MB)
+        </div>
+        <ul>
+            <li><span class="key-finding">Stolen File:</span> Q1_P&L_Final.zip</li>
+            <li><span class="key-finding">Exfiltration Destination:</span> 172.55.9.123 (Attacker's IP)</li>
+        </ul>
+    </div>
+
+    <div id="remediation" class="collapsible-header" onclick="toggleSection('remediation-content', this)">
+        <span class="toggle-arrow">&#9658;</span><h2>Recommended Immediate Remediation</h2>
+    </div>
+    <div id="remediation-content" class="collapsible-content remediation-plan">
+        <ol>
+            <li>
+                <h3>Block Attacker IP</h3>
+                <p>Immediately implement a firewall rule to **block all inbound and outbound traffic** to and from the external IP address **172.55.9.123**.</p>
+            </li>
+            <li>
+                <h3>Revoke Compromised Credentials</h3>
+                <p>The **'admin_tool'** user account must be **locked out and its password changed** across all systems immediately. Review all associated logs for further unusual activity.</p>
+            </li>
+            <li>
+                <h3>Isolate and Rebuild Host</h3>
+                <p>**Take the Jump Host** (**192.168.1.100**) and **RDP Server** (**192.168.1.250**) **offline**. Do not return them to service until they have been forensically imaged and completely rebuilt from a trusted, clean source.</p>
+            </li>
+        </ol>
+    </div>
+
+    <p style="margin-top: 30px; color: #ff3366;">[END OF REPORT]</p>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const date = new Date();
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        
+        const ukDate = date.toLocaleDateString('en-GB', options);
+        
+        const dateElementBody = document.getElementById('report-date-body');
+        if (dateElementBody) {
+            dateElementBody.textContent = ukDate;
+        }
+        
+        const dateElementHeader = document.getElementById('report-date-header');
+        if (dateElementHeader) {
+            dateElementHeader.textContent = ukDate;
+        }
+    });
+
+    function toggleSection(contentId, headerElement) {
+        const content = document.getElementById(contentId);
+        const arrow = headerElement.querySelector('.toggle-arrow');
+        
+        if (content.style.display === "block") {
+            // Collapse the section
+            content.style.display = "none";
+            arrow.innerHTML = "&#9658;"; 
+            arrow.classList.remove('expanded');
+            headerElement.classList.remove('active');
+        } else {
+            // Expand the section
+            content.style.display = "block";
+            arrow.innerHTML = "&#9660;"; 
+            arrow.classList.add('expanded');
+            headerElement.classList.add('active');
+        }
+    }
+</script>
+</body>
+</html>

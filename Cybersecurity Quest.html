@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Quest: School-Leaver Edition - Spot the Phish (Dark Tech Mode)</title>
+    <style>
+        /* Base Styles: Dark and professional */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 30px;
+            
+            /* Background image, enlarged and fixed to the left */
+            background-color: #1a1e24; /* Deep, dark background base color */
+            background-image: url('uclan logo.png'); /* Placeholder for your image */
+            background-repeat: no-repeat;
+            background-size: 80%;
+            background-position: left center;
+            background-attachment: fixed; 
+            
+            color: #e0e0e0; /* Light text for contrast */
+        }
+        /* Container: Highly Transparent */
+        .container {
+            max-width: 1400px; 
+            margin: 0 auto;
+            /* UPDATED: Low opacity background for transparency effect */
+            background-color: rgba(44, 51, 62, 0.05); /* Nearly transparent dark overlay */
+            padding: 50px;
+            border-radius: 6px; 
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            border: 2px solid #00aaff; /* Subtle blue tech border */
+        }
+        /* Headings: Bold, contrasting colors */
+        h1 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #00aaff; /* Bright blue for main title */
+            text-align: center;
+            font-size: 2.5em; 
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        h2 {
+            color: #e0e0e0; /* Light gray for section titles */
+            text-align: center;
+            border-bottom: 2px solid #00aaff; /* Blue accent line */
+            padding-bottom: 10px;
+            margin-top: 40px;
+            font-size: 1.8em;
+        }
+        /* Explanation Box: Alert color with dark text */
+        .explanation p {
+            background: #3a4452; /* Darker background for callout box */
+            padding: 18px;
+            border-left: 5px solid #ffaa00; /* Amber warning stripe */
+            border-radius: 4px;
+            margin-bottom: 20px;
+            color: #e0e0e0;
+        }
+        .explanation strong {
+            color: #ffaa00; /* Amber highlight */
+            font-weight: bold;
+        }
+        .scenario-box {
+            border: 1px solid #ffaa00;
+            background-color: #333941;
+            padding: 25px;
+            border-radius: 4px;
+            margin-top: 25px;
+            font-size: 1.1em;
+        }
+        /* Email Cards: Focus on structure */
+        .email-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .email-card {
+            flex: 1;
+            padding: 20px;
+            border: 1px solid #4f5b66;
+            border-radius: 4px;
+            background-color: #242a31; /* Dark email card background for readability */
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .email-card:hover {
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.4);
+            border-color: #00aaff; /* Blue glow on hover */
+            transform: translateY(-2px);
+        }
+        .email-card.selected {
+            border: 4px solid #ffaa00; /* Amber selection border */
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.7);
+        }
+        .email-card h3 {
+            margin-top: 0;
+            color: #00aaff;
+            border-bottom: 1px solid #4f5b66;
+            padding-bottom: 8px;
+        }
+        /* Email Content Simulation (PRE tag) */
+        .email-card pre {
+            white-space: pre-wrap;
+            font-family: 'Consolas', 'Courier New', monospace; /* Monospace for code/headers */
+            background-color: #1a1e24; /* Darker pre-block */
+            padding: 15px;
+            border: 1px dashed #4f5b66;
+            border-radius: 4px;
+            font-size: 0.9em; 
+            line-height: 1.4;
+            color: #a0a0a0; /* Subdued text inside email body */
+        }
+        /* Phishing Clue Highlighting */
+        #email-3 pre .spoofed-from,
+        #email-5 pre .spoofed-from {
+            font-weight: bold;
+            color: #ff6666; /* Red highlight for malicious sender */
+        }
+        #email-3 pre .subtle-font,
+        #email-5 pre .subtle-font {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        #email-3 pre .hidden-link-text,
+        #email-5 pre .hidden-link-text {
+            color: #00aaff;
+            text-decoration: underline;
+        }
+        /* Activity Area: Action button */
+        .activity-area {
+            margin-top: 40px;
+            text-align: center;
+        }
+        .activity-area button {
+            background-color: #28a745; /* Clean green for primary action */
+            color: white;
+            padding: 14px 40px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        .activity-area button:hover {
+            background-color: #1e7e34;
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.6);
+        }
+        /* Feedback Boxes */
+        .feedback {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 6px;
+            display: none;
+            font-size: 1.1em;
+            text-align: left;
+            font-weight: bold;
+        }
+        .feedback.correct {
+            background-color: #1f3d2f; /* Dark green correct */
+            color: #28a745;
+            border: 2px solid #28a745;
+        }
+        .feedback.incorrect {
+            background-color: #4a2828; /* Dark red incorrect */
+            color: #ff6666;
+            border: 2px solid #ff6666;
+        }
+        /* Staging and Sections */
+        #challenge-2, #challenge-3 {
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+        .school-crest {
+            float: left;
+            margin-right: 15px;
+            width: 70px;
+            height: auto;
+            border: 1px solid #4f5b66;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .email-card-content {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Riverside Crest School - School-Leaver Security Challenge</h1>
+        <hr>
+
+        <div class="explanation">
+            <h2>Threat Emulation Training Module: Post-Graduation Focus</h2>
+            <p>
+                As you transition to **university** or the **workforce**, your personal data remains **mission critical**. 
+                **Cybersecurity** protocols prevent unauthorized access. Compromise of your private accounts can lead to **financial loss** or identity theft. Your mission is to maintain a strong **Security Posture**.
+            </p>
+            <p>
+                **Phishing** uses social engineering to trick you into submitting your credentials. Analyze the source headers and payload of the following simulated inbound communications regarding **future plans and finances**.
+            </p>
+        </div>
+
+        ---
+
+        <div class="scenario" id="challenge-1">
+            <h2>🚨 Threat Scenario 1: University Enrolment Credential Harvest</h2>
+            <div class="scenario-box">
+                <p>
+                    Expected communication channel for student financing: **@riversidecrest.edu**. Two inbound packets detected regarding your university financing.
+                    <br><br>
+                    <strong>ACTION REQUIRED:</strong> Identify the **Legitimate Channel** to proceed.
+                </p>
+            </div>
+
+            <div class="email-container">
+                <div class="email-card" id="email-1" onclick="selectEmail(1)">
+                    <h3>Packet A: "CRITICAL ALERT: Student Loan Disbursement Failure"</h3>
+                    <div class="email-card-content">
+                        <img src="RiversideCrest.png" alt="Riverside Crest School logo" class="school-crest">
+                        <pre>
+From: Financial Aid &lt;admin.payments@riverside-support-finance.net&gt;
+To: Student
+Subject: URGENT: Loan Disbursement Failure - Action Required
+
+Dear Student,
+
+We have detected a critical error in your confirmed student loan—the disbursement has been rejected. To correct this and avoid a late fee on your tuition, you must log in to the system *immediately* to re-verify your bank details.
+
+Click here to view your account and re-submit details: 
+&lt;a href="http://www.crest-university-aid.logins.cc/verify-finance" target="_blank"&gt;http://www.crest-university-aid.logins.cc/verify-finance&lt;/a&gt;
+
+The link expires in 15 minutes! Hurry!
+
+Sincerely,
+RCS Student Finance Office
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="email-card" id="email-2" onclick="selectEmail(2)">
+                    <h3>Packet B: "Tuition Invoice Update Available"</h3>
+                    <div class="email-card-content">
+                        <pre>
+From: Student Accounts &lt;payments@riversidecrest.edu&gt;
+To: Student
+Subject: Your Updated Fall Tuition Invoice is Ready
+
+Hi [Student Name],
+
+Just a quick heads-up: Your Fall 2026 tuition invoice has been finalized following the late scholarship award. You can view the new amount and payment deadlines on the official student portal. 
+
+Please check your account using the normal university portal link:
+
+&lt;a href="https://portal.riversidecrest.edu/student-finance" target="_blank"&gt;https://portal.riversidecrest.edu/student-finance&lt;/a&gt;
+
+You have until the end of the month to make any final arrangements.
+
+Thanks,
+Riverside Crest University
+                        </pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-area">
+                <p>Selected Packet: <strong id="selection-display-1">None</strong></p>
+                <button onclick="submitSelection(1)" id="submit-button-1" disabled>Execute Selection</button>
+                <div id="feedback-1" class="feedback"></div>
+            </div>
+        </div>
+
+        ---
+
+        <div class="scenario" id="challenge-2">
+            <h2>🧠 Threat Scenario 2: Career Service Spoofing (Advanced)</h2>
+            <div class="scenario-box">
+                <p>
+                    Mission 1 Status: **[SUCCESS]**. This scenario utilizes **domain spoofing** and **curiosity/job-search anxiety** tactics, appearing to be from the Career Services team.
+                    <br><br>
+                    <strong>ACTION REQUIRED:</strong> Scrutinize all sender and URL data. Select the **Authentic Communication**.
+                </p>
+            </div>
+
+            <div class="email-container">
+                <div class="email-card" id="email-3" onclick="selectEmail(3)">
+                    <h3>Packet C: "New Job Posting: Immediate Application Review"</h3>
+                    <div class="email-card-content">
+                        <img src="RiversideCrest.png" alt="Riverside Crest School logo" class="school-crest">
+                        <pre class="subtle-font">
+From: <span class="spoofed-from">Careers Office (RCS Placement)</span> &lt;admin@riversidacrestservices.com&gt;
+To: Student
+Subject: ACTION REQUIRED: Confidential High-Value Job Match
+
+Dear Student,
+
+A recruiter has privately matched your profile with a highly confidential, six-figure job opening. This is a one-time offer for an immediate interview.
+
+You MUST access the secure application portal now to view the job details and submit your interest within 4 hours.
+
+Access the secure form here:
+&lt;a href="http://careers.riverside-crest.org/apply/urgent-role" target="_blank"&gt;&lt;span class="hidden-link-text"&gt;Click Here for Immediate Access&lt;/span&gt;&lt;/a&gt;
+
+For official career services info, see &lt;a href="https://www.riversidecrest.edu/careers" target="_blank"&gt;riversidecrest.edu/careers&lt;/a&gt;
+This notice is highly sensitive. Do not share or discuss this email with others.
+
+Best regards,
+Mr. P. Hughes
+Director of Placement, RCS
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="email-card" id="email-4" onclick="selectEmail(4)">
+                    <h3>Packet D: "Reminder: Advisory Meeting Tomorrow"</h3>
+                    <div class="email-card-content">
+                        <pre>
+From: Mr. P. Hughes &lt;phughes@riversidecrest.edu&gt;
+To: Student
+Subject: Career Fair Follow-up and CV Review Session
+
+Hi [Student Name],
+
+Thanks for attending the recent Career Fair. As promised, I'm setting up a small group CV review session for tomorrow at 2:00 PM in the Careers Suite to follow up on the contacts you made.
+
+Please remember to bring two printed copies of your current CV. You can always view the official workshop calendar on the student portal:
+&lt;a href="https://portal.riversidecrest.edu/calendar/workshops" target="_blank"&gt;https://portal.riversidecrest.edu/calendar/workshops&lt;/a&gt;
+
+No further action is required for this session other than attending. If you need to cancel, please email my administrative assistant.
+
+Sincerely,
+Mr. P. Hughes
+Director of Placement, RCS
+                        </pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-area">
+                <p>Selected Packet: <strong id="selection-display-2">None</strong></p>
+                <button onclick="submitSelection(2)" id="submit-button-2" disabled>Execute Final Selection</button>
+                <div id="feedback-2" class="feedback"></div>
+            </div>
+        </div>
+
+        ---
+
+        <div class="scenario" id="challenge-3">
+            <h2>🔥 Threat Scenario 3: Homoglyph Domain Spoof (Critical Alert)</h2>
+            <div class="scenario-box">
+                <p>
+                    Mission 2 Status: **[SUCCESS]**. This final scenario uses **Homoglyph Spoofing**, replacing Latin letters with visually identical characters from the **Cyrillic** or other alphabets (e.g., `a` vs `а`).
+                    <br><br>
+                    <strong>ACTION REQUIRED:</strong> Zoom in and check the email address and URL *character-by-character*. Select the **Legitimate Communication**.
+                </p>
+            </div>
+
+            <div class="email-container">
+                <div class="email-card" id="email-5" onclick="selectEmail(5)">
+                    <h3>Packet E: "Student Health Insurance Policy Expiring"</h3>
+                    <div class="email-card-content">
+                        <img src="RiversideCrest.png" alt="Riverside Crest School logo" class="school-crest">
+                        <pre class="subtle-font">
+From: <span class="spoofed-from">Student Health (RCS)</span> &lt;support@riversidecrеst.edu&gt;
+To: Student
+Subject: IMMEDIATE ACTION: Health Policy Suspension Pending
+
+Dear Recent Graduate,
+
+Our records indicate that your student health insurance policy will be suspended in 24 hours due to an outdated personal verification form required for post-graduation coverage renewal.
+
+Failure to immediately update the form will result in a lapse of coverage and major penalties. Please use the link below to provide your verification data.
+
+Update your information now:
+&lt;a href="https://rіversidecrest-health.com/update" target="_blank"&gt;https://rіversidecrest-health.com/update&lt;/a&gt;
+
+This is a time-sensitive matter. Log in and verify your identity now.
+
+Sincerely,
+RCS Health & Policy Services
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="email-card" id="email-6" onclick="selectEmail(6)">
+                    <h3>Packet F: "Graduate Survey and Alumni Event"</h3>
+                    <div class="email-card-content">
+                        <pre>
+From: Alumni Relations &lt;alumni@riversidecrest.edu&gt;
+To: Student
+Subject: Invitation: Alumni Meet-up and Graduate Survey
+
+Hi [Student Name],
+
+Congratulations on graduating! We are hosting a mandatory, but casual, alumni meet-up next month. Before then, we kindly ask you to complete a brief Graduate Destination Survey to help us track your progress.
+
+The survey is hosted on the official school servers, which you can access via the main alumni portal:
+&lt;a href="https://alumni.riversidecrest.edu/survey2026" target="_blank"&gt;https://alumni.riversidecrest.edu/survey2026&lt;/a&gt;
+
+Please complete the survey at your convenience, but no later than the end of the month. See you at the event!
+
+Best regards,
+Alumni Relations Team
+Riverside Crest School
+                        </pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-area">
+                <p>Selected Packet: <strong id="selection-display-3">None</strong></p>
+                <button onclick="submitSelection(3)" id="submit-button-3" disabled>Execute Final Selection</button>
+                <div id="feedback-3" class="feedback"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedEmail1 = null; 
+        let selectedEmail2 = null;
+        let selectedEmail3 = null; 
+
+        function selectEmail(emailNumber) {
+            let challengeNumber; 
+            if (emailNumber <= 2) {
+                challengeNumber = 1;
+            } else if (emailNumber <= 4) {
+                challengeNumber = 2;
+            } else {
+                challengeNumber = 3;
+            }
+
+            // Deselect all cards for the current challenge
+            document.querySelectorAll(`.email-card`).forEach(card => {
+                const cardIdNum = parseInt(card.id.replace('email-', ''));
+                if (
+                    (challengeNumber === 1 && cardIdNum <= 2) || 
+                    (challengeNumber === 2 && cardIdNum > 2 && cardIdNum <= 4) ||
+                    (challengeNumber === 3 && cardIdNum > 4)
+                ) {
+                    card.classList.remove('selected');
+                }
+            });
+
+            // Select the clicked card
+            const newSelection = document.getElementById('email-' + emailNumber);
+            newSelection.classList.add('selected');
+
+            if (challengeNumber === 1) {
+                selectedEmail1 = emailNumber;
+                document.getElementById('selection-display-1').innerText = 'Packet ' + (emailNumber === 1 ? 'A' : 'B');
+                document.getElementById('submit-button-1').disabled = false;
+                document.getElementById('feedback-1').style.display = 'none';
+            } else if (challengeNumber === 2) {
+                selectedEmail2 = emailNumber;
+                document.getElementById('selection-display-2').innerText = 'Packet ' + (emailNumber === 3 ? 'C' : 'D');
+                document.getElementById('submit-button-2').disabled = false;
+                document.getElementById('feedback-2').style.display = 'none';
+            } else { // Challenge 3
+                selectedEmail3 = emailNumber;
+                document.getElementById('selection-display-3').innerText = 'Packet ' + (emailNumber === 5 ? 'E' : 'F');
+                document.getElementById('submit-button-3').disabled = false;
+                document.getElementById('feedback-3').style.display = 'none';
+            }
+        }
+
+        function submitSelection(challengeNumber) {
+            const feedbackDiv = document.getElementById('feedback-' + challengeNumber);
+            feedbackDiv.style.display = 'block';
+            let selectedEmail = (challengeNumber === 1) ? selectedEmail1 : (challengeNumber === 2 ? selectedEmail2 : selectedEmail3);
+            const submitButton = document.getElementById('submit-button-' + challengeNumber);
+            submitButton.disabled = true; // Disable after submission attempt
+            
+            if (challengeNumber === 1) {
+                // Logic for Challenge 1
+                if (selectedEmail === 2) {
+                    feedbackDiv.className = 'feedback correct';
+                    feedbackDiv.innerHTML = '✅ **AUTHENTICATION SUCCESS: Packet B is VALID.**' +
+                        '<br><br><strong>Analysis:</strong> Correct sender domain (`@riversidecrest.edu`), low-urgency tone, and official link (`portal.riversidecrest.edu`). Threat Neutralized.' +
+                        '<br><br>➡️ **Commencing Threat Scenario 2...** Scroll down!';
+                } else {
+                    feedbackDiv.className = 'feedback incorrect';
+                    feedbackDiv.innerHTML = '❌ **AUTHENTICATION FAILURE: Packet A is MALICIOUS (Phish).**' +
+                        '<br><br><strong>Security Flags:</strong>' +
+                        '<ul>' +
+                        '<li>**DOMAIN MISMATCH:** From `@riverside-support-finance.net`, not the official **@riversidecrest.edu**.</li>' +
+                        '<li>**HIGH URGENCY:** Uses "URGENT," "immediately," and a time limit to exploit **financial fear**.</li>' +
+                        '<li>**KEYLOGGING LURE:** Link (`crest-university-aid.logins.cc`) is a fake credential harvesting site designed to steal **bank/student account details**.</li>' +
+                        '</ul>' +
+                        'Proceeding to Threat Scenario 2.';
+                }
+                
+                // Transition to Challenge 2
+                const challenge2 = document.getElementById('challenge-2');
+                challenge2.style.display = 'block';
+                setTimeout(() => {
+                    challenge2.style.opacity = '1';
+                    challenge2.scrollIntoView({ behavior: 'smooth' });
+                }, 10); 
+
+            } else if (challengeNumber === 2) {
+                 // Logic for Challenge 2
+                if (selectedEmail === 4) {
+                    feedbackDiv.className = 'feedback correct';
+                    feedbackDiv.innerHTML = '👑 **THREAT NEUTRALIZED! Packet D is VALID.**' +
+                        '<br><br><strong>Analysis:</strong> Correct staff address (`phughes@riversidecrest.edu`). Concerns a **pre-scheduled, low-urgency** event, requiring no immediate login. Official portal link verified.' +
+                        '<br><br>➡️ **Commencing Threat Scenario 3...** Scroll down!';
+                } else {
+                    feedbackDiv.className = 'feedback incorrect';
+                    feedbackDiv.innerHTML = '🚨 **BREACH DETECTED! Packet C is MALICIOUS (Advanced Spoof).**' +
+                        '<br><br><strong>Advanced Flags:</strong>' +
+                        '<ul>' +
+                        '<li>**SPOOFED DOMAIN:** Actual sender domain (`riverdaleacrestservices.com`) is incorrect and misspelled (a common tactic).</li>' +
+                        '<li>**SOCIAL ENGINEERING:** Uses the lure of a "highly confidential, six-figure job" to exploit **excitement and haste**.</li>' +
+                        '<li>**PHISHING LURE:** The login link (`careers.riverside-crest.org`) is designed to capture credentials.</li>' +
+                        '</ul>' +
+                        'Proceeding to Threat Scenario 3.';
+                }
+                
+                // Transition to Challenge 3
+                const challenge3 = document.getElementById('challenge-3');
+                challenge3.style.display = 'block';
+                setTimeout(() => {
+                    challenge3.style.opacity = '1';
+                    challenge3.scrollIntoView({ behavior: 'smooth' });
+                }, 10); 
+
+            } else { // Challenge 3 Logic (Homoglyph Attack)
+                if (selectedEmail === 6) {
+                    feedbackDiv.className = 'feedback correct';
+                    feedbackDiv.innerHTML = '💯 **MISSION COMPLETE! Packet F is VALID.**' +
+                        '<br><br><strong>Analysis:</strong> Correct, standard-issue domain (`alumni@riversidecrest.edu`). Low-urgency, standard request for alumni, using a verified internal link.' +
+                        '<br><br>**FINAL ASSESSMENT:** All threats contained. Your Security Posture is highly effective against advanced social engineering.' ;
+                } else if (selectedEmail === 5) {
+                    feedbackDiv.className = 'feedback incorrect';
+                    feedbackDiv.innerHTML = '⚠️ **HOMOGRAPH ATTACK SUCCESSFUL! Packet E is MALICIOUS.**' +
+                        '<br><br><strong>Security Flags:</strong>' +
+                        '<ul>' +
+                        '<li>**HOMOGLYPH SENDER:** The domain `riversidecr<span style="color:#ff6666;">е</span>st.edu` uses a **Cyrillic character** (`е`) in place of the Latin `e`. This is **impossible to spot visually**.</li>' +
+                        '<li>**HOMOGLYPH URL:** The link `r<span style="color:#ff6666;">і</span>versidecrest-health.com` uses a **Cyrillic character** (`і`) in place of the Latin `i`.</li>' +
+                        '<li>**EXTREME FEAR:** Uses "IMMEDIATE ACTION," "Suspension Pending," and "major penalties" to pressure a quick, unverified click.</li>' +
+                        '</ul>' +
+                        '**Key Takeaway:** Always hover over links to check the URL preview for non-standard characters, especially in urgent emails.';
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
