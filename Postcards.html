@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Final Year Projects </title>
+
+<link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+
+<style>
+
+  body {
+    margin: 0;
+    font-family: 'Audiowide', sans-serif;
+    background-color: #121212; 
+    background-image: url('uclan_logo2.png');
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: contain;
+    background-attachment: fixed;
+    background-blend-mode: soft-light;
+    color: #E0E0E0; 
+    overflow-x: hidden;
+  }
+
+  .audiowide-regular {
+    font-family: "Audiowide", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  h1 {
+  text-align: center;
+  padding: 20px;
+
+  font-family: 'Audiowide', cursive;
+  font-size: clamp(2rem, 5vw, 4rem);
+  color: #F8F8F8;
+  text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+  font-weight: 400; 
+  margin: 0 0 20px;
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 30px; 
+    width: 85vw;
+
+    height: 70vh;
+    margin: 20px auto;
+    perspective: 1000px; 
+  }
+
+  /* Postcard Styling */
+  .gallery-item {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #FFFFFF; 
+    padding: 10px; 
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5); 
+    transition: transform 0.4s ease, box-shadow 0.4s ease, z-index 0.1s ease;
+    overflow: hidden;
+    
+    /* Random Skew for Postcard Effect */
+    transform: rotate(calc(var(--i) * 0.7deg - 3deg)); 
+    transform-style: preserve-3d;
+  }
+
+  .gallery-item:nth-child(3n+1) { --i: 1; transform: rotate(-2deg); }
+  .gallery-item:nth-child(3n+2) { --i: 2; transform: rotate(1deg); }
+  .gallery-item:nth-child(3n)   { --i: 3; transform: rotate(-1.5deg); }
+
+
+  .gallery-item:hover,
+  .gallery-item:focus {
+    transform: rotate(0deg) scale(1.05) translateZ(50px); 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    outline: none;
+    z-index: 10;
+  }
+
+
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 3px;
+    display: block; 
+  }
+
+
+  .project-title-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 5px 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #FFD700; 
+    text-align: center;
+    font-family: 'Audiowide', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-shadow: 0 0 3px rgba(0,0,0,0.8);
+    pointer-events: none;
+  }
+
+  /* Video Overlay Styles - Adjusted Colors */
+  .video-overlay {
+    display: none;
+    opacity: 0;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: calc(100% - 60px);
+    background-color: rgba(0,0,0,0.9);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease;
+  }
+
+  .video-overlay.show {
+    display: flex;
+    opacity: 1;
+  }
+
+  .video-overlay video {
+    width: 90%;
+    height: auto;
+    max-height: 80vh;
+    border-radius: 8px;
+    border: 3px solid #FFD700; 
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.2);
+    background: #000;
+  }
+
+  .video-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #FFD700;
+    font-size: 1.5rem;
+    text-shadow: 0 0 5px #FFD700;
+    pointer-events: none;
+    display: none;
+  }
+
+  .video-loading.show {
+    display: block;
+  }
+
+  .video-caption {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #E0E0E0;
+    text-shadow: 0 0 3px #000;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 20px; right: 30px;
+    font-size: 30px;
+    color: #FF6B6B; 
+    cursor: pointer;
+    text-shadow: 0 0 5px #000;
+  }
+
+  .close-btn:focus {
+    outline: 2px solid #FF6B6B;
+  }
+
+  
+  #bottomLogo {
+    position: fixed;
+    top: 10%;
+    left: 0;
+    transform-origin: top left;
+    transform: rotate(0 deg) translate(-100%, 0);
+    width: clamp(150px, 18vw, 375px);
+    max-width: 45%;
+    opacity: 0.2;
+    pointer-events: none;
+    z-index: 1050;
+    transition: width 200ms ease, opacity 200ms ease, transform 200ms ease;
+  }
+
+  @media (max-width: 700px) {
+    #bottomLogo {
+      transform: rotate(-90deg) translate(-100%, 0);
+      width: clamp(100px, 25vw, 200px);
+      left: 0;
+      opacity: 0.15;
+    }
+  }
+
+  @media (max-width: 420px) {
+    #bottomLogo {
+      width: clamp(80px, 27vw, 150px);
+    }
+  }
+
+  /* Navbar Styles */
+  .navbar {
+    position: fixed;
+    bottom: 0; left: 0;
+    width: 100%;
+    height: 60px;
+    background: rgba(18, 18, 18, 0.95);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0;
+    z-index: 1100;
+    border-top: 2px solid #333333;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .navbar a {
+    font-family: 'Audiowide', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #E0E0E0;
+    text-decoration: none;
+    text-shadow: 0 0 3px rgba(0,0,0,0.5);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .navbar a:hover {
+    color: #FFD700;
+    text-decoration: none;
+    text-shadow: 0 0 8px #FFD700;
+    font-size: 1.2rem;
+  }
+</style>
+</head>
+<body>
+
+<h1 id="top-of-page">Recent Student Projects</h1>
+
+<div class="gallery" id="projectGallery">
+  </div>
+
+<div class="video-overlay" id="videoOverlay">
+  <span class="close-btn" id="closeBtn" aria-label="Close Video" tabindex="0">&times;</span>
+  <div>
+    <video id="videoPlayer" preload="metadata" controls playsinline muted></video>
+    <div class="video-caption" id="videoCaption"></div>
+    <div class="video-loading" id="videoLoading">Loading video...</div>
+  </div>
+</div>
+
+<img src="UniFootLogo2.png" id="bottomLogo" alt="UniFoot Logo">
+
+<div class="navbar" id="mainNavbar">
+  <a href="#top-of-page">Home</a>
+</div>
+
+<script>
+const BASE_URL = "https://vesta.uclan.ac.uk/~vestaopen2/Postcard/";
+const projectGallery = document.getElementById('projectGallery');
+const mainNavbar = document.getElementById('mainNavbar');
+const videoOverlay = document.getElementById('videoOverlay');
+const videoPlayer = document.getElementById('videoPlayer');
+const closeBtn = document.getElementById('closeBtn');
+const videoCaption = document.getElementById('videoCaption');
+const videoLoading = document.getElementById('videoLoading');
+
+let idleTimer;
+let idleTime = 30000;
+let autoplayIndex = 0;
+let autoplayActive = false;
+let projectsData = [];
+
+
+async function loadProjects() {
+  try {
+    const response = await fetch('projects.json');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    projectsData = await response.json();
+
+    projectsData.forEach(project => {
+
+      const itemWrapper = document.createElement('div');
+      itemWrapper.className = 'gallery-item';
+      itemWrapper.tabIndex = 0;
+      itemWrapper.role = 'button';
+
+
+      const img = document.createElement('img');
+      img.src = project.image;
+      img.alt = project.title;
+      img.setAttribute('data-video', project.video);
+      img.loading = 'lazy';
+
+
+      const titleOverlay = document.createElement('div');
+      titleOverlay.className = 'project-title-overlay';
+      titleOverlay.textContent = project.title;
+
+
+      itemWrapper.appendChild(img);
+      itemWrapper.appendChild(titleOverlay);
+
+
+      itemWrapper.addEventListener('click', () => openVideo(project.video, project.title));
+      itemWrapper.addEventListener('keypress', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openVideo(project.video, project.title);
+        }
+      });
+      projectGallery.appendChild(itemWrapper);
+    });
+
+    projectsData.forEach(project => {
+      const link = document.createElement('a');
+      link.href = "#";
+      link.setAttribute('data-video', project.video);
+      link.textContent = project.title;
+
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        openVideo(project.video, project.title);
+      });
+      mainNavbar.appendChild(link);
+    });
+
+    resetIdleTimer();
+
+  } catch (error) {
+    console.error('Could not load project data:', error);
+  }
+}
+
+function resetIdleTimer() {
+  if (idleTimer) clearTimeout(idleTimer);
+  if (!autoplayActive) idleTimer = setTimeout(startAutoplay, idleTime);
+}
+
+function preloadNextVideo() {
+  if (autoplayActive && autoplayIndex < projectsData.length) {
+    const nextVideo = projectsData[autoplayIndex];
+    if (nextVideo && nextVideo.video) {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'video';
+      link.href = BASE_URL + nextVideo.video;
+      document.head.appendChild(link);
+    }
+  }
+}
+
+function openVideo(videoFile, caption) {
+  if (!videoFile) return;
+
+
+  if (!autoplayActive) {
+    if (idleTimer) clearTimeout(idleTimer);
+  }
+
+  videoLoading.classList.add('show');
+
+  videoPlayer.src = BASE_URL + videoFile;
+  videoCaption.textContent = caption || "";
+  videoOverlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+
+
+  closeBtn.focus();
+
+  // Autoplay Fix: Mute if started by idle timer, unmute if started by user.
+  videoPlayer.muted = autoplayActive;
+
+  const playPromise = videoPlayer.play();
+  if (playPromise !== undefined) {
+    playPromise
+      .then(() => {
+        videoLoading.classList.remove('show');
+      })
+      .catch((error) => {
+        console.warn('Autoplay failed:', error);
+        videoLoading.classList.remove('show');
+      });
+  }
+
+  preloadNextVideo();
+}
+
+function closeVideo() {
+  videoOverlay.classList.remove('show');
+  videoLoading.classList.remove('show');
+  videoPlayer.pause();
+  videoPlayer.src = '';
+  document.body.style.overflow = '';
+
+  document.body.focus();
+
+  if (autoplayActive) {
+    autoplayActive = false;
+    autoplayIndex = 0;
+  }
+}
+
+function startAutoplay() {
+  autoplayActive = true;
+  autoplayIndex = 0;
+  playNextAutoplay();
+}
+
+function playNextAutoplay() {
+  if (!autoplayActive || autoplayIndex >= projectsData.length) {
+    closeVideo();
+    return;
+  }
+  const video = projectsData[autoplayIndex];
+  openVideo(video.video, video.title);
+  autoplayIndex++;
+}
+
+closeBtn.addEventListener('click', closeVideo);
+closeBtn.addEventListener('keypress', e => { if (e.key === 'Enter' || e.key === ' ') closeVideo(); });
+videoOverlay.addEventListener('click', e => { if (e.target === videoOverlay) closeVideo(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && videoOverlay.classList.contains('show')) closeVideo(); });
+
+videoPlayer.addEventListener('ended', () => { if (autoplayActive) playNextAutoplay(); else closeVideo(); });
+
+videoPlayer.addEventListener('waiting', () => {
+  videoLoading.classList.add('show');
+});
+
+videoPlayer.addEventListener('canplay', () => {
+  videoLoading.classList.remove('show');
+});
+
+const handleUserInteraction = () => {
+  if (autoplayActive) closeVideo();
+  resetIdleTimer();
+};
+
+document.addEventListener('click', handleUserInteraction);
+document.addEventListener('mousemove', handleUserInteraction);
+document.addEventListener('keydown', handleUserInteraction);
+document.addEventListener('touchstart', handleUserInteraction);
+
+loadProjects();
+</script>
+
+</body>
+</html>

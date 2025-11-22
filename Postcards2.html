@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Final Year Projects</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Lora', Georgia, serif; 
+    background-color: #f5f0e3; 
+    color: #4a4a4a; 
+    overflow-x: hidden;
+    background-image: url('uclan_logo2.png');
+    background-repeat: no-repeat;
+    background-position: top 100px right 20px; 
+    background-size: 200px; 
+    background-attachment: fixed;
+    background-blend-mode: normal; 
+  }
+
+  h1 {
+    text-align: center;
+    padding: 30px 20px 20px;
+    font-size: clamp(2rem, 5vw, 4rem); 
+    color: #fff; 
+    font-family: 'Merriweather', Georgia, serif; 
+    text-shadow: none; 
+    font-weight: 800;
+    margin: 0 0 40px;
+    border-bottom: 3px solid #b08968; 
+    background-color: #5d4037; 
+  }
+
+  /* --- GALLERY LAYOUT: Fixed 3x3 Grid --- */
+  .gallery {
+    /* Always 3 equal columns */
+    grid-template-columns: repeat(3, 1fr); 
+    display: grid;
+    gap: 30px;
+    width: 90vw; 
+    max-width: 1200px; 
+    margin: 40px auto;
+    height: auto; 
+  }
+
+  .gallery-item {
+    position: relative; 
+    width: 100%;
+    padding-bottom: 75%; 
+    height: 0; 
+    border-radius: 0; 
+    cursor: pointer;
+    border: 5px solid #ffffff; 
+    background-color: #ffffff; 
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25); 
+    transform: rotate(calc(var(--rotation-deg, -1) * 1deg)); 
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden; 
+  }
+
+  .gallery-item:hover,
+  .gallery-item:focus {
+    transform: scale(1.05) rotate(0deg); 
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3); 
+    outline: 3px solid #b08968; 
+  }
+
+  .gallery-item img {
+    position: absolute; 
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center; 
+    border-radius: 0; 
+  }
+
+  .project-title-overlay {
+    position: absolute;
+    bottom: 0; 
+    left: 0;
+    width: 100%;
+    padding: 10px 0;
+    background-color: #b08968; 
+    color: #fff; 
+    text-align: center;
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    text-shadow: none;
+    pointer-events: none;
+    border-radius: 0; 
+  }
+
+  .video-overlay {
+    display: none;
+    opacity: 0;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%; 
+    background-color: rgba(0,0,0,0.8); 
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.4s ease;
+  }
+
+  .video-overlay.show {
+    display: flex;
+    opacity: 1;
+  }
+
+  .video-overlay video {
+    width: 90%;
+    height: auto;
+    max-height: 90vh; 
+    border-radius: 10px;
+    border: 4px solid #fff; 
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+    background: #000;
+  }
+
+  .video-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff; 
+    font-size: 1.2rem;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    pointer-events: none;
+    display: none;
+  }
+
+  .video-loading.show {
+    display: block;
+  }
+
+  .video-caption {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 1rem;
+    color: #fff;
+    text-shadow: none;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 20px; right: 20px;
+    font-size: 40px;
+    color: #ffc107; 
+    cursor: pointer;
+    text-shadow: none;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+
+  .close-btn:hover,
+  .close-btn:focus {
+    opacity: 1;
+    outline: 2px solid #ffc107;
+  }
+
+  #bottomLogo {
+    position: fixed;
+    top: 20px; 
+    left: 20px;
+    bottom: auto; 
+    width: clamp(100px, 15vw, 250px);
+    max-width: 45%;
+    opacity: 0.15; 
+    pointer-events: none;
+    z-index: 1050;
+    transition: width 200ms ease, opacity 200ms ease, transform 200ms ease;
+  }
+
+  @media (max-width: 700px) {
+    #bottomLogo {
+      width: clamp(100px, 25vw, 200px);
+      top: 20px; 
+      bottom: auto;
+      left: 12px;
+      opacity: 0.1;
+    }
+  }
+
+  @media (max-width: 420px) {
+    #bottomLogo {
+      width: clamp(80px, 27vw, 150px);
+      top: 20px; 
+      bottom: auto;
+    }
+  }
+
+  .navbar {
+    position: fixed;
+    bottom: 0; left: 0;
+    width: 100%;
+    height: 60px;
+    background: #ffffff; 
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0;
+    z-index: 1100;
+    border-top: 1px solid #ddd; 
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .navbar a {
+    font-family: 'Lora', serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #5d4037; 
+    text-decoration: none;
+    text-shadow: none;
+    padding: 0 15px; 
+    transition: all 0.2s ease-in-out;
+  }
+
+  .navbar a:hover {
+    text-decoration: none;
+    color: #704a4a; 
+    font-size: 1.05rem; 
+    border-bottom: 3px solid #b08968; 
+  }
+  
+  /* Removed responsive adjustments for the gallery to enforce 3x3 */
+  /* If the screen is too small, the items will simply overflow or shrink awkwardly,
+     but the grid definition enforces the 3-column structure. */
+
+</style>
+</head>
+<body>
+
+<h1 id="top-of-page">Recent Student Projects</h1>
+
+<div class="gallery" id="projectGallery">
+  </div>
+
+<div class="video-overlay" id="videoOverlay">
+  <span class="close-btn" id="closeBtn" aria-label="Close Video" tabindex="0">&times;</span>
+  <div>
+    <video id="videoPlayer" preload="metadata" controls playsinline muted></video>
+    <div class="video-caption" id="videoCaption"></div>
+    <div class="video-loading" id="videoLoading">Loading video...</div>
+  </div>
+</div>
+
+<img src="UniFootLogo.png" id="bottomLogo" alt="UniFoot Logo">
+
+<div class="navbar" id="mainNavbar">
+  <a href="#top-of-page" id="homeButton">Home</a>
+</div>
+
+<script>
+const BASE_URL = "https://vesta.uclan.ac.uk/~vestaopen2/Postcard/";
+const projectGallery = document.getElementById('projectGallery');
+const mainNavbar = document.getElementById('mainNavbar');
+const videoOverlay = document.getElementById('videoOverlay');
+const videoPlayer = document.getElementById('videoPlayer');
+const closeBtn = document.getElementById('closeBtn');
+const videoCaption = document.getElementById('videoCaption');
+const videoLoading = document.getElementById('videoLoading');
+const homeButton = document.getElementById('homeButton');
+
+let idleTimer;
+let idleTime = 15000;
+let autoplayIndex = 0;
+let autoplayActive = false;
+let projectsData = [];
+
+// Function to generate a random slight rotation for the postcard look
+function getRandomRotation() {
+    return Math.floor(Math.random() * 7) - 3; 
+}
+
+
+async function loadProjects() {
+  try {
+    const response = await fetch('projects.json'); 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    projectsData = await response.json();
+    
+    projectsData.forEach(project => {
+     
+      const itemWrapper = document.createElement('div');
+      itemWrapper.className = 'gallery-item';
+      itemWrapper.tabIndex = 0; 
+      itemWrapper.role = 'button'; 
+      itemWrapper.style.setProperty('--rotation-deg', getRandomRotation());
+
+      const img = document.createElement('img');
+      img.src = project.image;
+      img.alt = project.title;
+      img.setAttribute('data-video', project.video);
+      img.loading = 'lazy'; 
+
+      const titleOverlay = document.createElement('div');
+      titleOverlay.className = 'project-title-overlay';
+      titleOverlay.textContent = project.title;
+
+      itemWrapper.appendChild(img);
+      itemWrapper.appendChild(titleOverlay);
+      
+      
+      itemWrapper.addEventListener('click', () => openVideo(project.video, project.title));
+      itemWrapper.addEventListener('keypress', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openVideo(project.video, project.title);
+        }
+      });
+      projectGallery.appendChild(itemWrapper);
+    });
+
+    projectsData.forEach(project => {
+      const link = document.createElement('a');
+      link.href = "#";
+      link.setAttribute('data-video', project.video);
+      link.textContent = project.title; 
+      
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        openVideo(project.video, project.title);
+      });
+      mainNavbar.appendChild(link);
+    });
+
+    resetIdleTimer();
+
+  } catch (error) {
+    console.error('Could not load project data:', error);
+  }
+}
+
+/**
+ * Opens and attempts to play the video in the overlay.
+ * Autoplay logic is handled by setting the muted status.
+ */
+function openVideo(videoFile, caption) {
+  if (!videoFile) return;
+  
+
+  if (!autoplayActive) {
+    if (idleTimer) clearTimeout(idleTimer);
+  }
+  
+  videoLoading.classList.add('show');
+  
+  videoPlayer.src = BASE_URL + videoFile;
+  videoCaption.textContent = caption || "";
+  videoOverlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+  
+ 
+  closeBtn.focus();
+  
+  videoPlayer.muted = autoplayActive;
+  
+  const playPromise = videoPlayer.play();
+  if (playPromise !== undefined) {
+    playPromise
+      .then(() => {
+        videoLoading.classList.remove('show');
+      })
+      .catch((error) => {
+        console.warn('Autoplay failed:', error);
+        videoLoading.classList.remove('show');
+      });
+  }
+  
+  preloadNextVideo();
+}
+
+/* Closes the video overlay, stops playback, and resets autoplay state. */
+function closeVideo() {
+  // 1. Stop playback and clear video source
+  videoPlayer.pause();
+  videoPlayer.src = ''; 
+  
+  // 2. Hide overlay and loading indicator
+  videoOverlay.classList.remove('show');
+  videoLoading.classList.remove('show');
+  
+  // 3. Reset body scroll
+  document.body.style.overflow = '';
+  
+  // 4. Reset autoplay state
+  if (autoplayActive) {
+    autoplayActive = false;
+    autoplayIndex = 0;
+  }
+  
+  // 5. Restart idle timer
+  resetIdleTimer();
+  
+  document.body.focus(); 
+}
+
+function resetIdleTimer() {
+  if (idleTimer) clearTimeout(idleTimer);
+  if (!autoplayActive) idleTimer = setTimeout(startAutoplay, idleTime);
+}
+
+function preloadNextVideo() {
+  if (autoplayActive && autoplayIndex < projectsData.length) {
+    const nextVideo = projectsData[autoplayIndex];
+    if (nextVideo && nextVideo.video) {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'video';
+      link.href = BASE_URL + nextVideo.video;
+      document.head.appendChild(link);
+    }
+  }
+}
+
+function startAutoplay() {
+  autoplayActive = true;
+  autoplayIndex = 0;
+  playNextAutoplay();
+}
+
+function playNextAutoplay() {
+  if (!autoplayActive || autoplayIndex >= projectsData.length) {
+    closeVideo();
+    return;
+  }
+  const video = projectsData[autoplayIndex];
+  openVideo(video.video, video.title);
+  autoplayIndex++;
+}
+
+homeButton.addEventListener('click', (e) => {
+  e.preventDefault(); 
+  closeVideo(); 
+  
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+});
+
+
+closeBtn.addEventListener('click', closeVideo);
+closeBtn.addEventListener('keypress', e => { if (e.key === 'Enter' || e.key === ' ') closeVideo(); });
+
+videoOverlay.addEventListener('click', e => { if (e.target === videoOverlay) closeVideo(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && videoOverlay.classList.contains('show')) closeVideo(); });
+
+videoPlayer.addEventListener('ended', () => { if (autoplayActive) playNextAutoplay(); else closeVideo(); });
+
+videoPlayer.addEventListener('waiting', () => {
+  videoLoading.classList.add('show');
+});
+
+videoPlayer.addEventListener('canplay', () => {
+  videoLoading.classList.remove('show');
+});
+
+const handleUserInteraction = () => {
+  if (autoplayActive) closeVideo(); 
+  resetIdleTimer();
+};
+
+document.addEventListener('click', handleUserInteraction);
+document.addEventListener('mousemove', handleUserInteraction);
+document.addEventListener('keydown', handleUserInteraction);
+document.addEventListener('touchstart', handleUserInteraction);
+
+loadProjects();
+</script>
+
+</body>
+</html>

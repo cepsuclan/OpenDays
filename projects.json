@@ -1,0 +1,47 @@
+[
+  {
+    "title": "My Happy Place App",
+    "image": "Images/Postcard1.jpg",
+    "video": "Videos/Postcard1.mp4"
+  },
+  {
+    "title": "AI-Based Text Prediction",
+    "image": "Images/Postcard2.jpg",
+    "video": "Videos/Postcard2.mp4"
+  },
+  {
+    "title": "Redaction Tool",
+    "image": "Images/Postcard3.jpg",
+    "video": "Videos/Postcard3.mp4"
+  },
+  {
+    "title": "Light Weight Real Time Rendering",
+    "image": "Images/Postcard4.jpg",
+    "video": "Videos/Postcard4.mp4"
+  },
+  {
+    "title": "Gender Age Detection",
+    "image": "Images/Postcard5.jpg",
+    "video": "Videos/Postcard5.mp4"
+  },
+  {
+    "title": "Softbody Mechanism",
+    "image": "Images/Postcard6.jpg",
+    "video": "Videos/Postcard6.mp4"
+  },
+  {
+    "title": "Something Organic",
+    "image": "Images/Postcard7.jpg",
+    "video": "Videos/Postcard7.mp4"
+  },
+  {
+    "title": "Something Something",
+    "image": "Images/Postcard8.jpg",
+    "video": "Videos/Postcard8.mp4"
+  },
+  {
+    "title": "Something Super",
+    "image": "Images/Postcard9.jpg",
+    "video": "Videos/Postcard9.mp4"
+  }
+]
