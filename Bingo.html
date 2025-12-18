@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phrase Bingo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 { color: #1a73e8; }
+
+        #bingo-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 600px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .cell {
+            aspect-ratio: 1 / 1;
+            background-color: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            user-select: none;
+            font-size: 0.9rem;
+        }
+
+        .cell:hover {
+            background-color: #e8f0fe;
+            border-color: #1a73e8;
+        }
+
+        .cell.marked {
+            background-color: #34a853;
+            color: white;
+            border-color: #2d8e47;
+            text-decoration: line-through;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            height: 1.5em;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover { background-color: #1557b0; }
+    </style>
+</head>
+<body>
+
+    <h1>Phrase Bingo</h1>
+    <div id="status">Click a square to start!</div>
+    
+    <div id="bingo-board"></div>
+
+    <button onclick="resetGame()">New Game / Shuffle</button>
+
+    <script>
+        const phrases = [
+            "Circle back", "Synergy", "Low hanging fruit", "Deep dive",
+            "Touch base", "Bandwidth", "Moving parts", "At the end of the day",
+            "Pain point", "Best practices", "Game changer", "Leverage",
+            "Value add", "Think outside the box", "Disruptor", "Win-win"
+        ];
+
+        const boardSize = 4; // 4x4 grid
+        let gameOver = false;
+
+        function createBoard() {
+            const board = document.getElementById('bingo-board');
+            board.innerHTML = '';
+            gameOver = false;
+            document.getElementById('status').innerText = "Game in progress...";
+            document.getElementById('status').style.color = "black";
+
+            // Shuffle phrases
+            const shuffled = [...phrases].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach((phrase, index) => {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.innerText = phrase;
+                cell.dataset.index = index;
+                cell.onclick = () => markCell(cell);
+                board.appendChild(cell);
+            });
+        }
+
+        function markCell(cell) {
+            if (gameOver || cell.classList.contains('marked')) return;
+
+            cell.classList.add('marked');
+            checkWin();
+        }
+
+        function checkWin() {
+            const cells = document.querySelectorAll('.cell');
+            const markedIndexes = Array.from(cells)
+                .map((cell, i) => cell.classList.contains('marked') ? i : null)
+                .filter(i => i !== null);
+
+            // Check Rows
+            for (let i = 0; i < boardSize; i++) {
+                let row = [];
+                for (let j = 0; j < boardSize; j++) row.push(i * boardSize + j);
+                if (row.every(idx => markedIndexes.includes(idx))) return triggerWin("Row Complete!");
+            }
+
+            // Check Columns
+            for (let i = 0; i < boardSize; i++) {
+                let col = [];
+                for (let j = 0; j < boardSize; j++) col.push(j * boardSize + i);
+                if (col.every(idx => markedIndexes.includes(idx))) return triggerWin("Column Complete!");
+            }
+        }
+
+        function triggerWin(message) {
+            gameOver = true;
+            const status = document.getElementById('status');
+            status.innerText = `BINGO! ${message}`;
+            status.style.color = "#34a853";
+        }
+
+        function resetGame() {
+            createBoard();
+        }
+
+        // Initialize on load
+        createBoard();
+    </script>
+</body>
+</html>
