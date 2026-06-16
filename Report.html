@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Forensics: Final Incident Report</title>
     <style>
+        
         :root{
             --bg:#1a1a2e;
             --panel:#0f0f1b;
@@ -29,11 +30,23 @@
                     box-shadow: 0 6px 18px rgba(255,170,0,0.12);
                 }
                 .brand { margin-left: auto; font-size:0.95rem; color: var(--muted); }
-
+                .logo-left {
+                    position: fixed;
+                    left: 12px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 160px;
+                    height: auto;
+                    opacity: 0.18;
+                    border-radius: 8px;
+                    z-index: 10;
+                    pointer-events: none;
+                }
         body {
             font-family: 'Courier New', Courier, monospace;
             background-color: #1a1a2e;
             color: #e0e0e0;
+            /* padding: 30px; */
         }
         .report-container {
             max-width: 900px;
@@ -50,7 +63,6 @@
             margin-bottom: 20px;
             text-align: center;
         }
-        /* Style for Collapsible Headings */
         .collapsible-header {
             color: #00ffcc;
             border-bottom: 1px solid #00ffcc;
@@ -61,7 +73,6 @@
             display: flex;
             align-items: center;
         }
-        /* Style for content hidden by default */
         .collapsible-content {
             display: none;
             padding-left: 20px;
@@ -114,19 +125,21 @@
         }
         .remediation-plan li {
             margin-bottom: 15px;
-            color: #a9ffb4;
+            color: #a9ffb4; /* Light green for success/action */
         }
     </style>
 </head>
 <body>
 
-<div class="top-nav" role="navigation" aria-label="Primary">
-    <div class="tabs" role="tablist" aria-label="Main tabs">
-        <a href="detective.html" class="tab" role="tab" aria-selected="false">Level 1 Dashboard</a>
-        <a href="Report.html" class="tab active" role="tab" aria-selected="true">Level 1 Report</a>
-        <a href="detective2.html" class="tab" role="tab" aria-selected="false">Level 2 Dashboard</a>
-        <a href="Report2.html" class="tab" role="tab" aria-selected="false">Level 2 Report</a>
-        <a href="Breach Sim.html" class="tab" role="tab" aria-selected="false">Breach Sim</a>
+<div class="top-nav">
+    <div class="tabs">
+        <a href="Index.html" class="tab">0. Introduction</a>
+        <a href="detective.html" class="tab">1. Level 1 Incident</a>
+        <a href="Report.html" class="tab">2. Report 1</a>
+        <a href="detective2.html" class="tab">3. Level 2 Incident</a>
+        <a href="Report2.html" class="tab">4. Report 2</a>
+        <a href="Breach Sim.html" class="tab">5. Breach Simulator</a>
+        <a href="osint.html" class="tab">6. OSINT Analysis</a>
     </div>
     <div class="brand">University of Lancashire — Training</div>
 </div>
@@ -137,8 +150,7 @@
     <div class="report-details">
         <p><strong>Incident Date:</strong> 2024-10-25</p>
         <p><strong>Report Date:</strong> <span id="report-date-body">25/10/2024</span></p>
-        <p><strong>Report Date (Header):</strong> <span id="report-date-header">25/10/2024</span></p>
-        <p><strong>Investigator:</strong> You </p>
+        <p><strong>Investigator:</strong> Automated System / Training Module</p>
         <p><strong>Incident Summary:</strong> Unauthorized external access to an internal Jump Host, followed by lateral movement to an RDP server and subsequent exfiltration of confidential financial data.</p>
     </div>
 
@@ -206,34 +218,24 @@
     document.addEventListener('DOMContentLoaded', function() {
         const date = new Date();
         const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-        
-        const ukDate = date.toLocaleDateString('en-GB', options);
-        
-        const dateElementBody = document.getElementById('report-date-body');
-        if (dateElementBody) {
-            dateElementBody.textContent = ukDate;
-        }
-        
-        const dateElementHeader = document.getElementById('report-date-header');
-        if (dateElementHeader) {
-            dateElementHeader.textContent = ukDate;
+        const formattedDate = date.toLocaleDateString('en-GB', options);
+        const dateElement = document.getElementById('report-date-body');
+        if (dateElement) {
+            dateElement.textContent = formattedDate;
         }
     });
-
     function toggleSection(contentId, headerElement) {
         const content = document.getElementById(contentId);
         const arrow = headerElement.querySelector('.toggle-arrow');
         
         if (content.style.display === "block") {
-            // Collapse the section
             content.style.display = "none";
-            arrow.innerHTML = "&#9658;"; 
+            arrow.innerHTML = "&#9658;";
             arrow.classList.remove('expanded');
             headerElement.classList.remove('active');
         } else {
-            // Expand the section
             content.style.display = "block";
-            arrow.innerHTML = "&#9660;"; 
+            arrow.innerHTML = "&#9660;";
             arrow.classList.add('expanded');
             headerElement.classList.add('active');
         }

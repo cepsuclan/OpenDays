@@ -52,6 +52,18 @@
         font-size:0.95rem;
         color: var(--muted);
     }
+    .logo-left {
+        position: fixed;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 160px;
+        height: auto;
+        opacity: 0.18;
+        border-radius: 8px;
+        z-index: 10;
+        pointer-events: none;
+    }
     .container {
         display: flex;
         flex-direction: row;
@@ -123,18 +135,21 @@
         #controls-panel{ order: 3; width:100%; flex-basis:auto; }
         #log-viewer{ order:1; }
         .top-nav{ padding:8px; }
+        .logo-left { display: none; }
     }
 </style>
 </head>
 <body>
 
-<div class="top-nav" role="navigation" aria-label="Primary">
-    <div class="tabs" role="tablist" aria-label="Main tabs">
-        <a href="detective.html" class="tab" role="tab" aria-selected="false">Level 1 Dashboard</a>
-        <a href="Report.html" class="tab" role="tab" aria-selected="false">Level 1 Report</a>
-        <a href="detective2.html" class="tab active" role="tab" aria-selected="true">Level 2 Dashboard</a>
-        <a href="Report2.html" class="tab" role="tab" aria-selected="false">Level 2 Report</a>
-        <a href="Breach Sim.html" class="tab" role="tab" aria-selected="false">Breach Sim</a>
+<div class="top-nav">
+    <div class="tabs">
+        <a href="Index.html" class="tab">0. Introduction</a>
+        <a href="detective.html" class="tab">1. Level 1 Incident</a>
+        <a href="Report.html" class="tab">2. Report 1</a>
+        <a href="detective2.html" class="tab">3. Level 2 Incident</a>
+        <a href="Report2.html" class="tab">4. Report 2</a>
+        <a href="Breach Sim.html" class="tab">5. Breach Simulator</a>
+        <a href="osint.html" class="tab">6. OSINT Analysis</a>
     </div>
     <div class="brand">University of Lancashire — Training</div>
 </div>
@@ -168,19 +183,21 @@
             </p>
 
             <p id="narrative-text"><span class="action-header">Your Task:</span>
-                Find the first time an <strong>external computer</strong> (not 192.168.x.x) successfully connected to your network.
+                Find the first time an <strong>external computer</strong> (not 192.168.x.x) successfully connected to the network.
             </p>
         </div>
 
-        <input type="text" id="answerInput" placeholder="Enter your answer here" aria-label="Submit evidence">
+        <input type="text" id="answerInput" placeholder="Enter the IP address (e.g., x.x.x.x)" aria-label="Submit evidence">
         <button onclick="validateAnswer()">Submit Evidence</button>
         <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>
 
         <div id="next-level-container" style="margin-top:12px;"></div>
 
-               <hr style="border-color: rgba(58,58,94,0.6); margin: 15px 0;">
-
         
+
+        <hr style="border-color: rgba(58,58,94,0.6); margin: 15px 0;">
+
+        <h3>Log Filter 🔍</h3>
         <div id="log-filter-section" class="log-filter-container" aria-labelledby="log-filter-label">
             <div class="filter-label" id="log-filter-label">Log Filter</div>
             <p id="strategy-tip" style="margin-top:8px; color:#bfffbf; font-size:0.92rem;">
@@ -197,22 +214,17 @@
                 <span> “192.168.x.x” addresses belong to your local network — like rooms inside a building. Anything else is from the outside world.</span>
             </div>
         </div>
-         <div class="logo-footer" style="text-align:center; margin-top:14px; padding-top:10px; border-top:1px dashed rgba(58,58,94,0.6);">
-            <img src="university_of_lancashire_logo.png" alt="University of Lancashire Logo" style="width:80%; opacity:0.75;">
-        </div>
     </div>
 </div>
 
 <script>
 const rawLogs = [
-    {time: "17:59:00", source: "192.168.1.130", target: "8.8.4.4", action: "DNS Query (External resolver)"},
+    
     {time: "17:59:05", source: "192.168.1.150", target: "192.168.1.5", action: "File server connection (User 'smit')"},
     {time: "17:59:10", source: "192.168.1.180", target: "Printer_Server", action: "Print Job initiated (Document: Q4_Budget_Review.xlsx)"},
     {time: "17:59:15", source: "192.168.1.101", target: "203.0.113.10", action: "Standard HTTPS Web traffic (News site)"},
-    {time: "17:59:18", source: "192.168.1.170", target: "192.168.1.254", action: "ARP broadcast (Who is 192.168.1.254?)"},
     {time: "17:59:22", source: "192.168.1.120", target: "192.168.1.254", action: "DHCP lease renewal"},
     {time: "17:59:30", source: "192.168.1.201", target: "192.168.1.250", action: "Ping request (Network check)"},
-    {time: "17:59:35", source: "192.168.1.160", target: "142.250.72.10", action: "Standard HTTPS Web traffic (Cloud storage sync)"},
     {time: "17:59:40", source: "192.168.1.177", target: "Mail_Server", action: "Email received (Subject: Project Update)"},
     {time: "17:59:50", source: "192.168.1.180", target: "8.8.8.8", action: "DNS query for 'internal-app.lan'"},
     {time: "18:00:00", source: "192.168.1.220", target: "Printer_Server", action: "Print Job initiated (Document: Syllabus_Draft.pdf)"},
@@ -223,29 +235,27 @@ const rawLogs = [
     {time: "18:00:30", source: "192.168.1.201", target: "192.168.1.1", action: "Router status check"},
     {time: "18:00:40", source: "192.168.1.177", target: "216.58.212.174", action: "Standard HTTPS Web traffic (Google search)"},
     {time: "18:00:50", source: "192.168.1.220", target: "192.168.1.220", action: "Local task scheduled (System maintenance)"},
-    {time: "18:01:00", source: "192.168.1.130", target: "8.8.4.4", action: "DNS Query (External resolver)"},
     {time: "18:01:10", source: "192.168.1.254", target: "8.8.8.8", action: "Routine DNS lookup (Health Check)"},
     {time: "18:01:25", source: "192.168.1.112", target: "52.1.2.3", action: "Video Conference stream started"},
-    {time: "18:01:40", source: "192.168.1.160", target: "142.250.72.10", action: "Standard HTTPS Web traffic (Cloud storage sync)"},
-    {time: "18:02:05", source: "192.168.1.201", target: "192.168.1.250", action: "Ping request (Network check)"},
 
+    
     {time: "18:02:20", source: "203.0.113.50", target: "192.168.1.110", action: "SSH login successful (User 'db_user_backup')"},
-    {time: "18:02:25", source: "192.168.1.110", target: "192.168.1.205", action: "ICMP Scan (Probing new subnet)"},
     {time: "18:02:35", source: "192.168.1.110", target: "192.168.1.110", action: "Local command execution: 'ping -c 5 192.168.1.240' (Target Validation)"},
     {time: "18:02:50", source: "192.168.1.110", target: "192.168.1.240", action: "SQL Connection Initiated (Attempt to bypass firewall)"},
     {time: "18:03:10", source: "192.168.1.240", target: "192.168.1.110", action: "File copy from DB: 'Student_Records_Backup.sql' (55 MB)"},
 
+    
     {time: "18:03:20", source: "192.168.1.254", target: "Storage_Server", action: "Automated nightly backup (Status: 10% complete)"},
 
+    
     {time: "18:03:30", source: "192.168.1.110", target: "203.0.113.50", action: "Large outbound file transfer: Student_Records_Backup.sql (70 MB)"},
 
-    {time: "18:03:35", source: "192.168.1.101", target: "203.0.113.10", action: "Standard HTTPS Web traffic (News site)"},
+    
     {time: "18:03:40", source: "192.168.1.112", target: "52.1.2.3", action: "Video Conference stream paused"},
-    {time: "18:03:50", source: "203.0.113.50", target: "192.168.1.110", action: "External connection terminated (SSH session closed)"},
-    {time: "18:04:00", source: "192.168.1.180", target: "Printer_Server", action: "Print Job initiated (Document: Research_Paper.pdf)"},
-    {time: "18:04:15", source: "192.168.1.150", target: "192.168.1.5", action: "File server connection closed"}
+    {time: "18:03:50", source: "203.0.113.50", target: "192.168.1.110", action: "External connection terminated (SSH session closed)"}
 ];
-// Will anyone notice this also includes 18:02:25192.168.1.110192.168.1.205ICMP Scan (Probing new subnet) - which is reconnaissance to discover is the SSH service is reachable?
+
+
 let currentStep = 1;
 const externalIP = '203.0.113.50';
 const jumpHost = '192.168.1.110';
@@ -254,6 +264,7 @@ const exploitedUser = 'db_user_backup';
 const exfiltratedFile = 'Student_Records_Backup.sql';
 let failedAttempts = 0;
 
+/* --- Render --- */
 document.addEventListener('DOMContentLoaded', () => {
     renderLogs(rawLogs);
     updateNarrative();
@@ -271,7 +282,9 @@ function renderLogs(logs) {
     });
 }
 
+
 function filterLogs() {
+
     const raw = document.getElementById('ipFilter').value;
     const filterValue = raw.trim().replace(/\s+/g, '').toLowerCase();
 
@@ -288,16 +301,16 @@ function updateHelpPanel() {
 
     switch(currentStep) {
         case 1:
-            strategyTip.textContent = "Strategy: The attacker used **SSH**. Filter the log by that protocol to find the external Source_IP. Ignore the earlier 'Login successful' events, as they are internal noise.";
+            strategyTip.textContent = "Strategy: The attacker used **SSH**. Filter the log by that protocol to find the external Source_IP.";
             break;
         case 2:
             strategyTip.textContent = `Strategy: Filter the logs using the attacker's IP (${externalIP}). When the attacker's IP is the 'Source_IP', the 'Target_IP' is the first internal machine they hit.`;
             break;
         case 3:
-            strategyTip.textContent = `Strategy: Filter by the Entry Point's IP (${jumpHost}) as the 'Source_IP'. Look for the next move where they access a new computer using **'SQL'** (lateral movement). Ignore the ICMP scan, which is just reconnaissance.`;
+            strategyTip.textContent = `Strategy: Filter by the Entry Point's IP (${jumpHost}) as the 'Source_IP'. Look for the next move where they access a new computer using **'SQL'** (lateral movement).`;
             break;
         case 4:
-            strategyTip.textContent = "Strategy: Revisit the very first SSH entry (Objective 1). The log's 'Action_Summary' explicitly names the account whose password was stolen.";
+            strategyTip.textContent = "Strategy: Revisit the very first successful entry (Objective 1). The log's 'Action_Summary' explicitly names the account whose password was stolen.";
             break;
         case 5:
             strategyTip.textContent = `Strategy: Filter by the attacker's IP (${externalIP}), but this time check where it is the 'Target_IP'. This entry shows the file being stolen from the network.`;
@@ -306,14 +319,6 @@ function updateHelpPanel() {
             strategyTip.textContent = "Investigation Complete!";
             break;
     }
-}
-
-function toggleInputVisibility(isVisible) {
-    const answerInput = document.getElementById('answerInput');
-    const submitButton = answerInput.nextElementSibling; 
-    
-    answerInput.style.display = isVisible ? 'block' : 'none';
-    submitButton.style.display = isVisible ? 'block' : 'none';
 }
 
 
@@ -326,38 +331,33 @@ function updateNarrative() {
         case 1:
             title.textContent = "Objective 1: Identify Initial Access";
             text.innerHTML = actionHeader + " Identify the external IP address (the non-192.168 IP) that first successfully connected to your network. This is the attacker's starting point.";
-            toggleInputVisibility(true);
             break;
         case 2:
             title.textContent = "Objective 2: Identify Compromised Host (Entry Point)";
             text.innerHTML = actionHeader + " Use the attacker's public IP to find the first internal computer they reached. Provide the internal IP address (192.168.x.x) of that machine.";
-            toggleInputVisibility(true);
             break;
         case 3:
             title.textContent = "Objective 3: Identify Lateral Movement (Database Server)";
             text.innerHTML = actionHeader + " The attacker moved from the entry point to a high-value server using a network protocol. Identify the internal IP address of the machine they accessed next using SQL.";
-            toggleInputVisibility(true);
             break;
         case 4:
             title.textContent = "Objective 4: Identify Exploited Credential";
             text.innerHTML = actionHeader + " Determine the User Account whose password the attacker stole and successfully used for initial access. Provide the exact user account name as seen in the logs.";
-            toggleInputVisibility(true);
             break;
         case 5:
             title.textContent = "Objective 5: Identify Stolen Data";
             text.innerHTML = actionHeader + " The attacker stole the files by sending them back to their public IP. Identify the exact file name (case sensitive) of the critical evidence that was exfiltrated.";
-            toggleInputVisibility(true);
             break;
         default:
             title.textContent = "Level 2 Investigation Concluded. 🎉";
             text.innerHTML = "You have successfully traced the attack from initial access to data exfiltration. All evidence points to a breach of the '" + jumpHost + "' and the theft of '" + exfiltratedFile + "'.";
             showNextLevelPrompt();
-            toggleInputVisibility(false);
             break;
     }
 
     updateHelpPanel();
 }
+
 
 function showNextLevelPrompt() {
     const container = document.getElementById('next-level-container');
@@ -369,8 +369,9 @@ function showNextLevelPrompt() {
     `;
 }
 
+
 function getIncorrectClue(step) {
-    failedAttempts++;
+    failedAttempts++; 
 
     const clues = {
         1: [
@@ -384,12 +385,14 @@ function getIncorrectClue(step) {
     };
 
     if (step === 1) {
+        
         const clueIndex = Math.min(failedAttempts - 1, clues[1].length - 1);
         return "Evidence rejected. <strong>Rethink your analysis:</strong> " + clues[1][clueIndex];
     } else {
         return "Evidence rejected. <strong>Rethink your analysis:</strong> " + clues[step];
     }
 }
+
 
 function validateAnswer() {
     const answerInput = document.getElementById('answerInput');

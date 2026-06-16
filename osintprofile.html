@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Profile — Heather Ackerson</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --panel: #0f0f1b;
+            --accent: #00ff00;
+            --gold: #ffaa00;
+            --muted: #a0a0a0;
+        }
+        html, body { height:100%; margin:0; background:var(--bg); color:#e0e0e0; font-family:"Courier New", Courier, monospace; }
+        .top-nav { display:flex; gap:8px; align-items:center; padding:10px 16px; background:linear-gradient(180deg, rgba(0,0,0,0.12), transparent); border-bottom:1px solid rgba(255,255,255,0.02); position:sticky; top:0; z-index:50; }
+        .tabs { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+        .tab { display:inline-block; padding:8px 14px; border-radius:8px; color:#e9ffe9; text-decoration:none; font-weight:bold; transition:background-color 0.2s; border:1px solid transparent; font-size:0.9em; }
+        .tab:hover { background-color: rgba(0,255,0,0.05); color:var(--accent); }
+        .brand { margin-left:auto; font-size:0.9em; color:var(--muted); }
+
+        .container { display:flex; gap:20px; max-width:1200px; margin:30px auto; padding:0 20px; }
+        .panel { background-color:var(--panel); padding:25px; border-radius:8px; border:1px solid rgba(255,255,255,0.05); box-shadow:0 0 15px rgba(0,255,0,0.1); }
+        /* Left profile area takes two-thirds, notes take one-third */
+        #profile-panel { flex: 0 0 66.666%; }
+        #notes-panel { flex: 0 0 33.333%; min-width:0; }
+
+        h2 { color:var(--accent); border-bottom:1px solid var(--accent); padding-bottom:10px; margin-top:0; font-size:1.3em; }
+        p { line-height:1.6; font-size:0.95em; color:#ccc; }
+        .highlight { color:var(--gold); font-weight:bold; }
+
+        .profile-list { background:#000; padding:12px; border-radius:6px; border:1px solid #222; color:var(--accent); }
+        .keyword { display:inline-block; background:rgba(255,170,0,0.06); color:var(--gold); padding:6px 10px; margin:6px 6px 0 0; border-radius:4px; font-weight:bold; }
+        .action-row { margin-top:16px; display:flex; gap:8px; }
+        .btn { padding:10px 14px; border-radius:6px; border:2px solid var(--accent); background:transparent; color:var(--accent); cursor:pointer; font-weight:bold; }
+        .btn.secondary { border-color:var(--gold); color:var(--gold); }
+
+        /* Image gallery */
+        .gallery-wrap { margin-top:22px; text-align:center; }
+        .image-grid { display:grid; gap:12px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); justify-items:center; align-items:start; max-width:960px; margin:0 auto; }
+        .image-card { background:#000; border:1px solid rgba(255,255,255,0.03); padding:8px; border-radius:8px; box-shadow: 0 6px 18px rgba(0,0,0,0.6); }
+        .image-card img { display:block; width:100%; height:120px; object-fit:cover; border-radius:6px; }
+        .image-caption { display: none; color:var(--muted); font-size:0.85em; margin-top:6px; }
+        .lightbox { position:fixed; inset:0; display:none; background:rgba(0,0,0,0.95); align-items:center; justify-content:center; z-index:2000; flex-direction:column; }
+        .lightbox img { max-width:92%; max-height:82%; border-radius:6px; box-shadow:0 10px 40px rgba(0,0,0,0.8); display:block; }
+        .lightbox .caption { display: none; color:#ddd; margin-top:12px; font-size:0.95em; }
+        .lightbox .lb-inner { position:relative; display:inline-block; }
+        .lightbox .nav-btn { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.06); color:var(--accent); padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:bold; }
+        .lightbox .nav-left { left:-56px; }
+        .lightbox .nav-right { right:-56px; }
+        .lightbox .close { position:absolute; top:18px; right:20px; background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); padding:8px 10px; border-radius:6px; cursor:pointer; }
+
+        .muted { color:var(--muted); font-size:0.92em; }
+
+        @media (max-width:850px) { .container { flex-direction:column; } #profile-panel { flex:none; } }
+    </style>
+</head>
+<body>
+    <div class="top-nav">
+        <div class="tabs">
+            <a href="Index.html" class="tab">0. Introduction</a>
+            <a href="detective.html" class="tab">1. Level 1 Incident</a>
+            <a href="Report.html" class="tab">2. Report 1</a>
+            <a href="detective2.html" class="tab">3. Level 2 Incident</a>
+            <a href="Report2.html" class="tab">4. Report 2</a>
+            <a href="Breach Sim.html" class="tab">5. Breach Simulator</a>
+            <a href="osint.html" class="tab">6. OSINT Analysis</a>
+        </div>
+        <div class="brand">University of Lancashire — Training</div>
+    </div>
+
+    <div class="container">
+        <div id="profile-panel" class="panel">
+            <h2>> Open Source Intellegence C: PROFILE SUMMARY</h2>
+            <div class="instruction-box" style="background:rgba(0,0,0,0.12); border:1px solid rgba(255,255,255,0.03); padding:14px;">
+                <div class="instruction-title" style="color:var(--gold); font-size:1.05em; margin-bottom:8px;">Target: <span class="highlight">Heather Ackerson</span></div>
+                <div class="muted">Source: <a href="https://vesta.uclan.ac.uk/~vestaopen/index.php/2023/08/31/info-1/" target="_blank" style="color:var(--gold);">Public Profile</a></div>
+            </div>
+
+            <!-- Observations and automated candidate keywords removed -->
+            <p class="muted" style="margin-top:6px;">Reference images below. Click any image to view larger; use arrow keys or on-screen controls to navigate.</p>
+            
+            <div class="gallery-wrap">
+                <h3 style="color:var(--accent); margin-top:18px;">Reference Images</h3>
+                <div id="imageGrid" class="image-grid" aria-live="polite"></div>
+            </div>
+        </div>
+
+        <div id="notes-panel" class="panel">
+            <h2>> NOTES</h2>
+            <div class="profile-list" style="min-height:300px;">
+                <p style="color:#ccc;">Create a list of candidate words (names, places, pets, hobbies, dates) in the box below. When you click the button, the words will be copied to the clipboard and stored so they can be pasted into the OSINT breaching tool on the analysis page.</p>
+                <textarea id="customKeywords" style="width:100%; height:140px; margin-top:8px; background:#000; color:var(--accent); border:1px solid var(--gold); padding:10px; border-radius:6px;">florence, garden</textarea>
+                <div style="margin-top:10px;"><button class="btn" onclick="copyFromTextarea()">Copy & Return to OSINT Tool</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyToOSINT(){
+            const keywords = Array.from(document.querySelectorAll('.keyword')).map(k => k.textContent).join(', ');
+            try {
+                navigator.clipboard.writeText(keywords);
+                alert('Keywords copied to clipboard: ' + keywords);
+            } catch(e) {
+                // fallback: open osint and pass via localStorage
+                localStorage.setItem('osint_profile_keywords', keywords);
+                window.open('osint.html','_self');
+            }
+        }
+        function copyFromTextarea(){
+            const txt = document.getElementById('customKeywords').value.trim();
+            if(!txt) return alert('No keywords to copy');
+            try { navigator.clipboard.writeText(txt); }
+            catch(e) { /* ignore clipboard failures */ }
+            // always save to localStorage so osint.html can auto-fill
+            localStorage.setItem('osint_profile_keywords', txt);
+            // navigate back to the OSINT tool where the words will be prefilled
+            window.location.href = 'osint.html';
+        }
+       
+        
+        // === Image grid population ===
+        const imageFiles = [
+            "1.png",
+            "1000005770.png",
+            "1000005774.png",
+            "1000005776-1.png",
+            "672d1418-e203-466d-bb59-6c9b9122d263-1024x580.png",
+            "ae71cb8f-ddc1-4529-b0ec-ca12d1387680-1024x580.png",
+            "Capture.jpg",
+            "cat3-1024x495.png",
+            "catt1-1024x491.png",
+            "cb-instagram-post-2.png",
+            "cb-instagram-post-3.png",
+            "cb-instagram-post.png",
+            "dog1.png",
+            "dog2 (1).png",
+            "dog2.png",
+            "download.png",
+            "face1-1024x613.png",
+            "face2 (1).png",
+            "face2 (2).png",
+            "face2.png",
+            "facebook_post.png",
+            "hobbu2.png",
+            "image-1024x646.png",
+            "image_editor_output_image-1249934846-1693590184413.png",
+            "image_editor_output_image-2064506273-1693590217444.png",
+            "image_editor_output_image1713755856-1693590151098.png",
+            "image_editor_output_image1915014501-1693590132083.png",
+            "image_editor_output_image2064593355-1693590203079.png",
+            "image_editor_output_image241026166-1693590104670.png",
+            "insta.png",
+            "insta1.png",
+            "instagram_post-4.png",
+            "instagram_post.png",
+            "pink1.png",
+            "Screenshot_20230901-182029-461x1024 (1).png",
+            "Screenshot_20230901-182029-461x1024.png",
+            "Screenshot_20230901-185020-853x1024.png",
+            "Screenshot_20230901-190201-714x1024.png",
+            "Screenshot_20230901-190558-461x1024.png",
+            "Screenshot_20230901-190616-461x1024.png",
+            "Screenshot_20230901-190815-461x1024.png",
+            "Screenshot_20230901-204350-525x1024.png",
+            "Screenshot_20230901-204430-641x1024 (1).png",
+            "Screenshot_20230901-204430-641x1024.png",
+            "tat1-1024x813 (1).png",
+            "tat1-1024x813.png",
+            "tat2-1024x683.png",
+            "TikTok_Profile-512x1024.png",
+            "tweet-image-1024x456.png",
+            "tweet_1695126037550.png",
+            "uni2-1024x645.png",
+            "uni3-589x1024.png",
+            "univr.png",
+            "univr2.png",
+            "whatsapp (1).png",
+            "whatsapp.png",
+            "wolf1.png",
+            "wolf2-1024x785.png"
+        ];
+
+        const grid = document.getElementById('imageGrid');
+        imageFiles.forEach(fname => {
+            const card = document.createElement('div');
+            card.className = 'image-card';
+            const img = document.createElement('img');
+            // Use encoded URI part so special chars/spaces are handled
+            img.src = 'OSINT images/' + encodeURIComponent(fname);
+            img.alt = fname;
+            img.loading = 'lazy';
+            const cap = document.createElement('div'); cap.className = 'image-caption'; cap.textContent = fname;
+            card.appendChild(img);
+            card.appendChild(cap);
+            grid.appendChild(card);
+        });
+
+        // Lightbox with navigation positioned near image
+        const lightbox = document.createElement('div'); lightbox.className = 'lightbox'; lightbox.id = 'lightbox';
+        const lbClose = document.createElement('button'); lbClose.className = 'close'; lbClose.textContent = '×';
+        const lbInner = document.createElement('div'); lbInner.className = 'lb-inner';
+        const lbImg = document.createElement('img');
+        const prevBtn = document.createElement('button'); prevBtn.className = 'nav-btn nav-left'; prevBtn.textContent = '⟨';
+        const nextBtn = document.createElement('button'); nextBtn.className = 'nav-btn nav-right'; nextBtn.textContent = '⟩';
+        lbInner.appendChild(prevBtn);
+        lbInner.appendChild(lbImg);
+        lbInner.appendChild(nextBtn);
+        const lbCaption = document.createElement('div'); lbCaption.className = 'caption';
+        lightbox.appendChild(lbClose);
+        lightbox.appendChild(lbInner);
+        lightbox.appendChild(lbCaption);
+        document.body.appendChild(lightbox);
+
+        let currentIndex = -1;
+        function showImage(index){
+            if(index < 0 || index >= imageFiles.length) return;
+            currentIndex = index;
+            const fname = imageFiles[index];
+            lbImg.src = 'OSINT images/' + encodeURIComponent(fname);
+            lbCaption.textContent = fname;
+            lightbox.style.display = 'flex';
+        }
+        function openLightbox(index){ showImage(index); }
+        function closeLightbox(){ lightbox.style.display = 'none'; lbImg.src = ''; currentIndex = -1; }
+        function nextImage(){ if(currentIndex < imageFiles.length - 1) showImage(currentIndex + 1); }
+        function prevImage(){ if(currentIndex > 0) showImage(currentIndex - 1); }
+
+        prevBtn.addEventListener('click', (e)=>{ e.stopPropagation(); prevImage(); });
+        nextBtn.addEventListener('click', (e)=>{ e.stopPropagation(); nextImage(); });
+        lbClose.addEventListener('click', closeLightbox);
+        // close when clicking outside the image (but not when clicking the image or buttons)
+        lightbox.addEventListener('click', (e)=>{ if(e.target === lightbox) closeLightbox(); });
+        // keyboard navigation
+        document.addEventListener('keydown', (e)=>{
+            if(currentIndex === -1) return;
+            if(e.key === 'ArrowRight') nextImage();
+            if(e.key === 'ArrowLeft') prevImage();
+            if(e.key === 'Escape') closeLightbox();
+        });
+
+        // wire thumbnails to open by index
+        const cards = Array.from(document.querySelectorAll('.image-card img'));
+        cards.forEach((imgEl, idx) => imgEl.addEventListener('click', ()=> openLightbox(idx)));
+
+        // === Clear-two-word placeholder behaviour for notes textarea ===
+        (function setupNotesPlaceholder(){
+            const ta = document.getElementById('customKeywords');
+            if(!ta) return;
+            const placeholder = 'florence, garden';
+            // ensure initial value is the two-word suggestion
+            if(!ta.value || ta.value.trim()==='') ta.value = placeholder;
+            function clearIfPlaceholder(){
+                if(ta.value.trim() === placeholder){ ta.value = ''; }
+                ta.removeEventListener('focus', clearIfPlaceholder);
+                ta.removeEventListener('click', clearIfPlaceholder);
+            }
+            ta.addEventListener('focus', clearIfPlaceholder);
+            ta.addEventListener('click', clearIfPlaceholder);
+        })();
+    </script>
+</body>
+</html>

@@ -5,18 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Incident Report - Level 2 )</title>
     <style>
-        
         :root{
             --bg:#1a1a2e;
             --panel:#0f0f1b;
             --accent:#00ff00;
             --muted:#ccc;
-            --gold:#ffaa00; 
+            --gold:#ffaa00;
             --border: rgba(255,170,0,0.2);
         }
         html,body{height:100%; margin:0; background:var(--bg); color:#e0e0e0; font-family: "Courier New", Courier, monospace;}
 
-        /* Nav */
         .top-nav {
             display:flex; gap:8px; align-items:center; padding:10px 16px;
             background: linear-gradient(180deg, rgba(0,0,0,0.12), transparent);
@@ -34,8 +32,19 @@
             box-shadow: 0 6px 18px rgba(255,170,0,0.12);
         }
         .brand { margin-left: auto; font-size:0.95rem; color: var(--muted); }
+        .logo-left {
+            position: fixed;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 160px;
+            height: auto;
+            opacity: 0.18;
+            border-radius: 8px;
+            z-index: 10;
+            pointer-events: none;
+        }
 
-        /* Report */
         .report-container {
             max-width: 900px; margin: 25px auto; padding: 20px;
             background-color: var(--panel); border-radius: 12px;
@@ -45,23 +54,22 @@
         h2 { color: var(--gold); border-bottom: 1px solid var(--border); padding-bottom: 5px; margin-top: 25px; }
         h3 { color: var(--muted); margin-top: 15px; }
 
-        /* Details (Collapsible) */
         details {
             margin-top: 15px; border: 1px solid var(--border); border-radius: 6px;
             padding: 10px; background-color: #121226;
         }
         details summary {
             font-weight: 700; color: var(--gold); cursor: pointer; padding: 5px;
-            list-style: none; 
+            list-style: none;
         }
         details summary::-webkit-details-marker { display: none; }
         details summary::before {
-            content: "▶"; 
+            content: "▶";
             margin-right: 10px; font-size: 0.9em;
             color: var(--gold);
         }
         details[open] summary::before {
-            content: "▼"; 
+            content: "▼";
         }
         details p { margin: 8px 0; padding-left: 20px; }
         details ul, details ol { margin: 8px 0; padding-left: 40px; }
@@ -71,24 +79,27 @@
             white-space: pre-wrap; font-size: 0.9em; line-height: 1.4;
         }
         .log-entry { color: #f0f0f0; margin: 3px 0; }
-        
-       
+
         .highlight-green {
             color: var(--accent);
         }
-        
-        
+
+        @media (max-width:820px){
+            .logo-left { display: none; }
+        }
     </style>
 </head>
 <body>
 
-<div class="top-nav" role="navigation" aria-label="Primary">
-    <div class="tabs" role="tablist" aria-label="Main tabs">
-        <a href="detective.html" class="tab" role="tab" aria-selected="false">Level 1 Dashboard</a>
-        <a href="Report.html" class="tab" role="tab" aria-selected="false">Level 1 Report</a>
-        <a href="detective2.html" class="tab" role="tab" aria-selected="false">Level 2 Dashboard</a>
-        <a href="Report2.html" class="tab active" role="tab" aria-selected="true">Level 2 Report</a>
-        <a href="Breach Sim.html" class="tab" role="tab" aria-selected="false">Breach Sim</a>
+<div class="top-nav">
+    <div class="tabs">
+        <a href="Index.html" class="tab">0. Introduction</a>
+        <a href="detective.html" class="tab">1. Level 1 Incident</a>
+        <a href="Report.html" class="tab">2. Report 1</a>
+        <a href="detective2.html" class="tab">3. Level 2 Incident</a>
+        <a href="Report2.html" class="tab">4. Report 2</a>
+        <a href="Breach Sim.html" class="tab">5. Breach Simulator</a>
+        <a href="osint.html" class="tab">6. OSINT Analysis</a>
     </div>
     <div class="brand">University of Lancashire — Training</div>
 </div>
@@ -97,7 +108,7 @@
     <h1>Final Incident Report (Level 2)</h1>
     
     <p><strong>Case File:</strong> UL-CB-2025-L2</p>
-    <p><strong>Analyst:</strong> You : Chief Information Security Officer</p>
+    <p><strong>Analyst:</strong> Detective AI (A002)</p>
     <p><strong>Date of Report:</strong> <span id="report-date-header"></span></p>
 
     <details open>
@@ -192,11 +203,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const date = new Date();
         const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-        
-        // Use 'en-GB' locale for DD/MM/YYYY format
-        const ukDate = date.toLocaleDateString('en-GB', options); 
-        
-        // date into the header
+        const ukDate = date.toLocaleDateString('en-GB', options);
         document.getElementById('report-date-header').textContent = ukDate;
     });
 </script>

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity & Privacy Quiz</title>
+    <style>
+        /* === NEW CSS FOR TABS (Copied from detective.html) === */
+        :root{
+            --bg:#1a1a2e;
+            --panel:#0f0f1b;
+            --accent:#00ff00;
+            --muted:#ccc;
+            --gold:#ffaa00;
+            --quiz-color: #00ffcc; /* Cyan for the Quiz active tab */
+        }
+        .top-nav {
+            display:flex;
+            gap:8px;
+            align-items:center;
+            padding:10px 16px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.12), transparent);
+            border-bottom:1px solid rgba(255,255,255,0.02);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            margin-bottom: 20px;
+        }
+        .tabs {
+            display:flex;
+            gap:6px;
+            align-items:center;
+        }
+        .tab {
+            display:inline-block;
+            padding:8px 14px;
+            border-radius:8px;
+            color: #e9ffe9;
+            text-decoration:none;
+            background: transparent;
+            border: 1px solid rgba(0,255,0,0.06);
+            transition: background 160ms, transform 120ms;
+            font-weight:600;
+            font-size:0.95rem;
+        }
+        .tab:hover{ transform: translateY(-2px); background: rgba(0,255,0,0.04); }
+        .tab.active{
+            background: var(--quiz-color); /* Using Cyan for Quiz */
+            color: #1a1a2e;
+            box-shadow: 0 6px 18px rgba(0,255,65,0.12);
+        }
+        .brand {
+            margin-left: auto;
+            font-size:0.95rem;
+            color: var(--muted);
+        }
+        /* === END NEW CSS === */
+        
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            min-height: 100vh;
+            background: #0f2027; /* fallback for old browsers */
+            background: linear-gradient(135deg, #000000 0%, #0f2027 100%);
+            color: #33ff33;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 0.03em;
+            font-size: 18px;
+            display: flex;
+            /* Adjust content alignment to push it below the fixed nav bar */
+            flex-direction: column;
+            justify-content: flex-start; 
+            align-items: center;
+            padding-top: 20px; /* Add some space below the sticky nav */
+        }
+        #app-container {
+            background: rgba(0,0,0,0.85);
+            border: 2px solid #33ff33;
+            border-radius: 10px;
+            box-shadow: 0 0 30px #33ff3355;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+        h1 {
+            color: #00ffcc; /* Cyan for the header */
+            border-bottom: 2px solid #00ffcc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            text-shadow: 0 0 5px #00ffcc;
+        }
+        #quiz-container {
+            text-align: left;
+        }
+        .question-text {
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+            font-size: 1.1em;
+            color: #fff;
+        }
+        .option-label {
+            display: block;
+            margin-bottom: 0.5em;
+            cursor: pointer;
+            padding: 8px;
+            border: 1px solid #33ff3355;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+        .option-label:hover {
+            background: #33ff331a;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        #submit-button, #restart-button, #show-answers-button, #start-button {
+            background-color: #33ff33;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1em;
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+        #submit-button:hover, #start-button:hover {
+            background-color: #00cc00;
+        }
+        #restart-button {
+            background-color: #ffaa00; /* Orange for restart */
+        }
+        #restart-button:hover {
+            background-color: #cc8800;
+        }
+        #show-answers-button {
+            background-color: #00ffcc;
+        }
+        #show-answers-button:hover {
+            background-color: #00b396;
+        }
+        .hidden {
+            display: none;
+        }
+        #result-container {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ff0000;
+            border-radius: 5px;
+            background: #ff00001a;
+            color: #ffaa00;
+            text-align: center;
+        }
+        #result-container.pass {
+            border: 1px solid #33ff33;
+            background: #33ff331a;
+        }
+        #answers-list {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #00ffcc;
+            border-radius: 5px;
+            background: #00ffcc1a;
+            text-align: left;
+            font-size: 0.9em;
+        }
+        .correct {
+            background: #004d00;
+            border-color: #00ff00;
+        }
+        .incorrect {
+            background: #4d0000;
+            border-color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-nav" role="navigation" aria-label="Primary">
+    <div class="tabs" role="tablist" aria-label="Main tabs">
+        <a href="detective.html" class="tab" role="tab" aria-selected="false">Level 1 Dashboard</a>
+        <a href="Report.html" class="tab" role="tab" aria-selected="false">Level 1 Report</a>
+        <a href="detective2.html" class="tab" role="tab" aria-selected="false">Level 2 Dashboard</a>
+        <a href="Report2.html" class="tab" role="tab" aria-selected="false">Level 2 Report</a>
+        <a href="Quiz.html" class="tab active" role="tab" aria-selected="true">Final Quiz</a>
+    </div>
+    <div class="brand">University of Lancashire — Training</div>
+</div>
+<div id="app-container">
+        <h1 id="quiz-header">Cybersecurity & Privacy Quiz</h1>
+        <div id="welcome-screen">
+            <p>Welcome, <strong id="username-display">Investigator</strong>. Test your knowledge of the breach investigation and general cybersecurity practices.</p>
+            <p style="font-size: 0.9em; color: #ffaa00;">You must answer all questions correctly to pass.</p>
+            <button id="start-button">START QUIZ</button>
+        </div>
+
+        <div id="quiz-area" class="hidden">
+            <p id="question-counter" style="color: #00ffcc;"></p>
+            <div id="quiz-container">
+                </div>
+            <button id="submit-button">SUBMIT ANSWER</button>
+        </div>
+
+        <div id="result-screen" class="hidden">
+            <div id="result-container"></div>
+            <p style="margin-top: 15px; font-size: 0.9em; color: #ccc;">Review your knowledge before restarting.</p>
+            <button id="restart-button">RESTART QUIZ</button>
+            <button id="show-answers-button">SHOW ALL QUESTIONS & ANSWERS</button>
+            <div id="answers-list" class="hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- QUIZ DATA ---
+        const allQuestions = [
+            {
+                question: "What is the primary function of a Jump Host in a network architecture?",
+                options: [
+                    "To serve static web pages to the public.",
+                    "To act as a central, hardened gateway for administrators to access sensitive internal systems.",
+                    "To store the main database of employee payroll records.",
+                    "To automatically patch vulnerabilities on all network devices."
+                ],
+                correctAnswer: 1, // Index of the correct answer
+                category: "Investigation"
+            },
+            {
+                question: "In the Level 1 breach, the attacker gained initial access by exploiting credentials for which type of internal server?",
+                options: [
+                    "Web Server (192.168.1.50)",
+                    "Database Server (192.168.1.251)",
+                    "Jump Host (192.168.1.100)",
+                    "Printer Server (192.168.1.180)"
+                ],
+                correctAnswer: 2,
+                category: "Investigation"
+            },
+            {
+                question: "Which term describes an attacker moving from one compromised system to another inside a network?",
+                options: [
+                    "Exfiltration",
+                    "Lateral Movement",
+                    "Brute-Force Attack",
+                    "Denial of Service (DoS)"
+                ],
+                correctAnswer: 1,
+                category: "Cybersecurity"
+            },
+            {
+                question: "In the Level 2 breach, what was the significance of the secondary external IP address (e.g., 203.0.113.44)?",
+                options: [
+                    "It was the IP that the attacker used for initial access (phishing).",
+                    "It was the IP of the compromised Jump Host.",
+                    "It was the second, dedicated endpoint used solely for data exfiltration (to evade detection).",
+                    "It was a decoy IP that generated login failures."
+                ],
+                correctAnswer: 2,
+                category: "Investigation"
+            },
+            {
+                question: "Which of the following is the most effective immediate countermeasure to prevent a similar credential-based breach?",
+                options: [
+                    "Implementing a mandatory monthly password change policy.",
+                    "Enabling Multi-Factor Authentication (MFA) on all admin accounts.",
+                    "Disabling all internal firewalls.",
+                    "Encrypting all traffic with basic HTTP."
+                ],
+                correctAnswer: 1,
+                category: "Cybersecurity"
+            }
+        ];
+        
+        // --- QUIZ STATE ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userName = "Investigator";
+        let selectedQuestions = []; // Array to hold the 5 questions for the current quiz run
+
+        // --- DOM ELEMENTS ---
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const quizArea = document.getElementById('quiz-area');
+        const resultScreen = document.getElementById('result-screen');
+        const submitButton = document.getElementById('submit-button');
+        const restartButton = document.getElementById('restart-button');
+        const startQuizBtn = document.getElementById('start-button');
+        const resultContainer = document.getElementById('result-container');
+        const quizContainer = document.getElementById('quiz-container');
+        const showAnswersBtn = document.getElementById('show-answers-button');
+        const answersList = document.getElementById('answers-list');
+        const usernameDisplay = document.getElementById('username-display');
+        const questionCounter = document.getElementById('question-counter');
+
+        // --- FUNCTIONS ---
+
+        function promptForName() {
+            const name = prompt("Please enter your name/alias for the quiz (e.g., Detective Smith):");
+            if (name && name.trim()) {
+                userName = name.trim().substring(0, 20); // Limit name length
+            }
+            usernameDisplay.textContent = userName;
+            document.getElementById('quiz-header').textContent = `${userName}'s Quiz`;
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startQuiz() {
+            // 1. Setup State
+            currentQuestionIndex = 0;
+            score = 0;
+            // Select all questions (no shuffling or random selection for a static 5-question test)
+            selectedQuestions = allQuestions; 
+            
+            // 2. Update UI
+            welcomeScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            quizArea.classList.remove('hidden');
+            answersList.classList.add('hidden');
+            
+            // 3. Render first question
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= selectedQuestions.length) {
+                showResults();
+                return;
+            }
+
+            const q = selectedQuestions[currentQuestionIndex];
+            quizContainer.innerHTML = `
+                <div class="question-text">Q${currentQuestionIndex + 1}: ${q.question}</div>
+                ${q.options.map((option, index) => `
+                    <label class="option-label">
+                        <input type="radio" name="answer" value="${index}" data-correct="${index === q.correctAnswer}">
+                        ${option}
+                    </label>
+                `).join('')}
+            `;
+            questionCounter.textContent = `Question ${currentQuestionIndex + 1} of ${selectedQuestions.length}`;
+            submitButton.disabled = false;
+        }
+
+        function validateAnswer() {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            if (!selectedOption) {
+                alert("Please select an answer before submitting.");
+                return;
+            }
+
+            submitButton.disabled = true;
+            const selectedValue = parseInt(selectedOption.value);
+            const question = selectedQuestions[currentQuestionIndex];
+
+            // Highlight answers
+            document.querySelectorAll('.option-label').forEach(label => {
+                const input = label.querySelector('input');
+                const optionIndex = parseInt(input.value);
+
+                // Correct answer is highlighted in green
+                if (optionIndex === question.correctAnswer) {
+                    label.classList.add('correct');
+                } 
+                // Incorrectly selected answer is highlighted in red
+                else if (optionIndex === selectedValue && selectedValue !== question.correctAnswer) {
+                    label.classList.add('incorrect');
+                }
+                input.disabled = true;
+            });
+            
+            // Check if correct
+            if (selectedValue === question.correctAnswer) {
+                score++;
+            }
+
+            // Move to the next question after a short delay
+            setTimeout(() => {
+                currentQuestionIndex++;
+                // Clear highlights
+                document.querySelectorAll('.option-label').forEach(label => {
+                    label.classList.remove('correct', 'incorrect');
+                    label.querySelector('input').disabled = false;
+                });
+                loadQuestion();
+            }, 1000);
+        }
+
+        function showResults() {
+            quizArea.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+
+            const totalQuestions = selectedQuestions.length;
+            const percentage = (score / totalQuestions) * 100;
+
+            let resultText = '';
+            resultContainer.classList.remove('pass');
+
+            if (score === totalQuestions) {
+                resultText = `Excellent work, ${userName}! You scored ${score}/${totalQuestions} (100%). Your knowledge is verified.`;
+                resultContainer.classList.add('pass');
+            } else {
+                resultText = `Review required, ${userName}. You scored ${score}/${totalQuestions} (${percentage.toFixed(0)}%). Please review the logs and reports and try again.`;
+            }
+
+            resultContainer.innerHTML = resultText;
+        }
+
+        function restartQuiz() {
+            // Reset everything to the start state
+            currentQuestionIndex = 0;
+            score = 0;
+            resultScreen.classList.add('hidden');
+            welcomeScreen.classList.remove('hidden');
+            answersList.classList.add('hidden');
+            showAnswersBtn.textContent = "SHOW ALL QUESTIONS & ANSWERS";
+            promptForName(); // Prompt for name again on restart
+        }
+
+        // Show/hide answers functionality
+        showAnswersBtn.addEventListener('click', () => {
+            if (answersList.classList.contains('hidden')) {
+                // Build the answers list
+                answersList.innerHTML = selectedQuestions.map((q, i) => `
+                    <div style="margin-bottom:1.2em;">
+                        <div style="color:#33ff33;">Q${i + 1}: ${q.question}</div>
+                        <div style="color:#baffba;">A: ${q.options[q.correctAnswer]}</div>
+                    </div>
+                `).join('');
+                answersList.classList.remove('hidden');
+                showAnswersBtn.textContent = "HIDE QUESTIONS & ANSWERS";
+            } else {
+                answersList.classList.add('hidden');
+                showAnswersBtn.textContent = "SHOW ALL QUESTIONS & ANSWERS";
+            }
+        });
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            promptForName(); // Prompt for name immediately on page load
+
+            startQuizBtn.addEventListener('click', () => {
+                startQuiz();
+            });
+             restartButton.addEventListener('click', () => {
+                 restartQuiz();
+             });
+             submitButton.addEventListener('click', () => {
+                 validateAnswer();
+             });
+         });
+    </script>
+</body>
+</html>

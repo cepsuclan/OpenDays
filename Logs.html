@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Advanced Cyber Forensics: Incident "Iron Gate"</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<style>
+/* ------------------------------
+   RETRO TERMINAL STYLE (MATCHING DETECTIVE.HTML)
+--------------------------------*/
+body {
+  margin: 0;
+  padding: 0;
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.95)),
+    url('blue-background-designify.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #00ff00;
+  font-family: 'Share Tech Mono', monospace;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  padding: 2rem;
+  border-bottom: 2px solid #0f0;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  position: relative;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: #0f0;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+header p {
+  margin: 0.5rem 0 0;
+  color: #00ff00;
+  opacity: 0.8;
+}
+
+main {
+  padding: 2rem;
+  max-width: 1300px;
+  margin: auto;
+  flex: 1;
+}
+
+/* Forensic Preamble Section */
+.forensic-preamble {
+  background: rgba(0, 255, 0, 0.05);
+  border: 2px solid #0f0;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: 4px;
+  font-size: 1.1rem;
+}
+
+.forensic-preamble h3 {
+  margin-top: 0;
+  color: #0f0;
+  text-transform: uppercase;
+  border-bottom: 1px solid #0f0;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+/* Terminal Cards */
+.card {
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 2px solid #0f0;
+  border-radius: 0;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+}
+
+.card-header {
+  background: rgba(0, 255, 0, 0.1);
+  padding: 1rem 1.5rem;
+  border-bottom: 2px solid #0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #0f0;
+  letter-spacing: 1px;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* Layout */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+/* Log Entries Table */
+.logs-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.logs-table th {
+  text-align: left;
+  color: #00ff00;
+  border-bottom: 2px solid #0f0;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+}
+
+.logs-table tr:hover {
+  background: rgba(0, 255, 0, 0.15);
+}
+
+.logs-table td {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+  vertical-align: top;
+}
+
+.event-line {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.event-line:hover {
+  color: #fff;
+  text-shadow: 0 0 8px #0f0;
+}
+
+.event-line.selected {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* Tags */
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid #0f0;
+  border-radius: 0;
+  font-size: 0.9rem;
+  background: rgba(0, 255, 0, 0.1);
+}
+
+/* Timeline Visual */
+.timeline-container {
+  border-left: 3px solid #0f0;
+  margin-left: 1rem;
+  padding-left: 2rem;
+  position: relative;
+  min-height: 200px;
+}
+
+.timeline-event {
+  position: relative;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: rgba(0, 255, 0, 0.08);
+  border: 1px solid #0f0;
+  border-radius: 0;
+  cursor: grab;
+  transition: all 0.2s;
+}
+
+.timeline-event.wrong {
+  border-color: #ff0000;
+  box-shadow: 0 0 15px #ff0000;
+  color: #ff0000;
+}
+
+.timeline-event.dragging {
+  opacity: 0.5;
+}
+
+.timeline-event::before {
+  content: "";
+  position: absolute;
+  left: calc(-2rem - 8px);
+  top: 1.2rem;
+  width: 12px;
+  height: 12px;
+  background: #000;
+  border: 2px solid #0f0;
+  border-radius: 0;
+}
+
+.timeline-event.valid-item::before {
+  background: #0f0;
+  box-shadow: 0 0 10px #0f0;
+}
+
+.timeline-event .remove-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: 1px solid #0f0;
+  color: #0f0;
+  cursor: pointer;
+  padding: 2px 8px;
+  font-family: inherit;
+}
+
+.timeline-event .remove-btn:hover { 
+  background: #0f0;
+  color: #000;
+}
+
+.timeline-meta {
+  font-size: 0.9rem;
+  color: #0f0;
+  opacity: 0.9;
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+}
+
+/* Feedback & Buttons */
+.feedback-box {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 2px solid #0f0;
+  display: none;
+  background: rgba(0, 255, 0, 0.1);
+  font-size: 1.1rem;
+}
+
+.error { border-color: #f00; color: #f00; background: rgba(255, 0, 0, 0.1); }
+.success { border-color: #0f0; color: #0f0; }
+
+button {
+  background: none;
+  color: #0f0;
+  border: 2px solid #0f0;
+  padding: 0.8rem 1.5rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+}
+
+button:hover {
+  background: #0f0;
+  color: #000;
+  box-shadow: 0 0 15px #0f0;
+}
+
+#check-btn {
+  flex-grow: 1;
+}
+
+/* === FOOTER STYLING === */
+#uclan-link-container {
+  margin-top: 40px;
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid rgba(0, 255, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.uclan-link-box {
+  background-color: #444;
+  color: #eee;
+  padding: 15px 25px;
+  border-radius: 4px;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  font-size: 0.9rem;
+}
+
+.uclan-link-box a {
+  color: #87ceeb; /* Light Sky Blue */
+  text-decoration: none;
+}
+
+.uclan-link-box a:hover {
+  text-decoration: underline;
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.7s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+</style>
+</head>
+<body class="fade-in">
+
+<header>
+  <h1>IRON GATE: RECONSTRUCTING THE TIMELINE</h1>
+  <p>System status: INTRUSION_DETECTED // Filter logs to reconstruct the breach.</p>
+</header>
+
+<main>
+  <section class="forensic-preamble">
+    <h3>The Art of Timeline Reconstruction</h3>
+    <p>
+      In modern cybersecurity, responding to a breach is only the beginning. One of the most critical skill for a Cybersecurity Analyst is the ability to reconstruct the <strong>Kill Chain</strong>—the exact sequence of events that allowed an adversary to penetrate the network. Establishing a clear timeline is essential for legal evidence, identifying the root cause, and ensuring the same vulnerability is not exploited twice.
+    </p>
+    <p>
+      This task requires more than just technical knowledge; it demands <strong>critical thinking</strong> to differentiate between malicious intent and standard system noise, <strong>pattern recognition</strong> to spot the signs of lateral movement, and <strong>attention to detail</strong>.
+    </p>
+  </section>
+
+  <div class="layout">
+    
+    <!-- Left: Log Sources -->
+    <div class="card">
+      <div class="card-header">
+        <h2>CENTRALIZED_LOG_REPOSITORY</h2>
+        <span style="font-size:0.8rem;">[Evidence Selection]</span>
+      </div>
+      <div class="card-body">
+        <table class="logs-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Source</th>
+              <th>Event Description</th>
+            </tr>
+          </thead>
+          <tbody id="log-pool">
+            <!-- Items injected by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right: Constructed Timeline -->
+    <div class="card">
+      <div class="card-header">
+        <h2>ATTACK_NARRATIVE_TIMELINE</h2>
+        <span style="font-size:0.8rem;">[Sequence Reordering]</span>
+      </div>
+      <div class="card-body">
+        <div class="timeline-container" id="timeline">
+          <!-- Timeline events added here -->
+        </div>
+
+        <div class="actions" style="margin-top:2rem; display:flex; gap:1rem;">
+          <button id="check-btn">VALIDATE KILL CHAIN</button>
+          <button id="clear-btn">RESET</button>
+        </div>
+
+        <div id="feedback" class="feedback-box"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer id="uclan-link-container">
+  <div class="uclan-link-box">
+    <span>View more from the <a href="https://www.uclan.ac.uk/" target="_blank">University of Lancashire</a></span>
+  </div>
+</footer>
+
+<script>
+/* ------------------------------
+   DATA DEFINITIONS
+--------------------------------*/
+const logItems = [
+    { id: "M1", ts: "08:15:22", src: "SYS", type: "noise", msg: "Office Printer: Paper tray 2 was refilled.", real: false },
+    { id: "H1", ts: "08:20:05", src: "USER", type: "herring", msg: "Login Failed: User 'ceo_office' typed the wrong password twice.", real: false, herringClue: "This looks like a hack, but it's actually just the CEO forgetting their new password. No malicious software was found." },
+    { id: "A1", ts: "08:30:10", src: "MAIL", type: "breach", msg: "Fake Email: 'Urgent: Your Payroll' (Sender address has a typo).", real: true, clue: "Scammers often pretend to be your boss or IT department using an email address that looks almost right but has a small typo." },
+    { id: "M2", ts: "08:35:45", src: "USER", type: "noise", msg: "Employee 'jsmith' changed their computer wallpaper.", real: false },
+    { id: "H2", ts: "08:38:12", src: "SYS", type: "herring", msg: "Security Alert: A scheduled 'Anti-Virus Full Scan' has started.", real: false, herringClue: "Don't be fooled by the word 'Alert'—this is a routine scan the computer does every week to stay healthy." },
+    { id: "A2", ts: "08:42:15", src: "USER", type: "breach", msg: "Employee 'rgreen' clicked a link inside the suspicious payroll email.", real: true, clue: "The attack begins when a person is tricked into clicking a link, opening the 'digital door' for the hacker." },
+    { id: "A3", ts: "08:44:02", src: "NET", type: "breach", msg: "Hidden Download: A mysterious file named 'payload.zip' was saved to the PC.", real: true, clue: "After clicking a link, the computer usually downloads a hidden file that contains the hacker's tools." },
+    { id: "M3", ts: "08:50:00", src: "SYS", type: "noise", msg: "Automatic system cleanup (Disk Defrag) started.", real: false },
+    { id: "A4", ts: "08:52:11", src: "USER", type: "breach", msg: "File Run: The downloaded 'payroll_details' file was opened by the user.", real: true, clue: "The computer is only infected once the downloaded file is actually opened or 'run'." },
+    { id: "H3", ts: "09:02:44", src: "NET", type: "herring", msg: "High Traffic: 500MB of data sent to 'Windows Update Cloud'.", real: false, herringClue: "This looks like data theft, but 'Windows Update' is a safe destination. The computer was just downloading a new version of Word." },
+    { id: "A5", ts: "09:12:30", src: "SYS", type: "breach", msg: "Password Theft: A fake program tried to peek at the saved passwords on the PC.", real: true, clue: "Once inside, the first thing a hacker wants is your keys—your usernames and passwords." },
+    { id: "A6", ts: "09:30:00", src: "NET", type: "breach", msg: "Remote Control: The hacker used the stolen password to log into the main server.", real: true, clue: "Using the stolen keys, the hacker moves from the employee's PC to the company's main storage room (the server)." },
+    { id: "M5", ts: "09:45:10", src: "SYS", type: "noise", msg: "Standard Windows Update finished successfully.", real: false },
+    { id: "A7", ts: "10:15:44", src: "NET", type: "breach", msg: "Data Stolen: A massive amount of company data was sent to a secret online storage site.", real: true, clue: "The goal of most attacks is 'Exfiltration'—stealing private data and moving it out of the company." }
+];
+
+const correctSequence = ["A1", "A2", "A3", "A4", "A5", "A6", "A7"];
+
+/* ------------------------------
+   APP STATE & RENDERING
+--------------------------------*/
+let timelineEvents = [];
+const logPoolEl = document.getElementById('log-pool');
+const timelineEl = document.getElementById('timeline');
+const feedbackEl = document.getElementById('feedback');
+
+function init() {
+    logItems.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = 'event-line';
+        tr.id = `row-${item.id}`;
+        tr.innerHTML = `
+            <td>${item.ts}</td>
+            <td><span class="tag">${item.src}</span></td>
+            <td>${item.msg}</td>
+        `;
+        tr.onclick = () => addToTimeline(item);
+        logPoolEl.appendChild(tr);
+    });
+    renderTimeline();
+}
+
+function addToTimeline(item) {
+    if (timelineEvents.some(e => e.id === item.id)) return;
+    timelineEvents.push({...item});
+    document.getElementById(`row-${item.id}`).classList.add('selected');
+    renderTimeline();
+    feedbackEl.style.display = 'none';
+}
+
+function renderTimeline() {
+    timelineEl.innerHTML = '';
+    if (timelineEvents.length === 0) {
+        timelineEl.innerHTML = '<p style="opacity:0.5;">_SELECT_CRITICAL_LOGS_TO_BEGIN_ANALYSIS_</p>';
+        return;
+    }
+
+    timelineEvents.forEach((ev, index) => {
+        const div = document.createElement('div');
+        div.className = 'timeline-event' + (ev.real ? ' valid-item' : '');
+        div.draggable = true;
+        div.dataset.index = index;
+        div.id = `timeline-${ev.id}`;
+        div.innerHTML = `
+            <div class="timeline-meta">${ev.ts} // SOURCE: ${ev.src}</div>
+            <div class="timeline-summary">${ev.msg}</div>
+        `;
+
+        div.ondragstart = (e) => {
+            e.dataTransfer.setData('text/plain', index);
+            div.classList.add('dragging');
+        };
+        div.ondragover = (e) => e.preventDefault();
+        div.ondrop = (e) => {
+            e.preventDefault();
+            const fromIndex = e.dataTransfer.getData('text/plain');
+            const toIndex = index;
+            const movedItem = timelineEvents.splice(fromIndex, 1)[0];
+            timelineEvents.splice(toIndex, 0, movedItem);
+            renderTimeline();
+        };
+        div.ondragend = () => div.classList.remove('dragging');
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-btn';
+        removeBtn.innerHTML = 'X';
+        removeBtn.onclick = (e) => {
+            e.stopPropagation();
+            timelineEvents.splice(index, 1);
+            document.getElementById(`row-${ev.id}`).classList.remove('selected');
+            renderTimeline();
+        };
+
+        div.appendChild(removeBtn);
+        timelineEl.appendChild(div);
+    });
+}
+
+document.getElementById('check-btn').onclick = () => {
+    // Check for Red Herrings (Suspicious but harmless)
+    const herring = timelineEvents.find(e => e.type === 'herring');
+    if (herring) {
+        showFeedback(`FALSE ALARM: "${herring.msg}" looks scary, but it's a Red Herring. ${herring.herringClue}`, "error");
+        highlightError(herring.id);
+        return;
+    }
+
+    // Check for Mundane Noise
+    const noise = timelineEvents.find(e => e.type === 'noise');
+    if (noise) {
+        showFeedback(`ALERT: "${noise.msg}" is just normal office activity. It doesn't belong in a crime scene investigation.`, "error");
+        highlightError(noise.id);
+        return;
+    }
+
+    if (timelineEvents.length < correctSequence.length) {
+        showFeedback("ANALYSIS_INCOMPLETE: You haven't found all the steps of the break-in yet.", "error");
+        return;
+    }
+
+    // Check Order
+    for (let i = 0; i < correctSequence.length; i++) {
+        if (timelineEvents[i].id !== correctSequence[i]) {
+            const outOfOrder = timelineEvents[i];
+            showFeedback(`SEQUENCE_ERROR: Step ${i+1} is incorrect. Remember: ${outOfOrder.clue}`, "error");
+            highlightError(outOfOrder.id);
+            return;
+        }
+    }
+
+    showFeedback("BREACH_VERIFIED: Great job, Detective! You separated the real clues from the distractions and mapped the entire attack.", "success");
+};
+
+function showFeedback(msg, type) {
+    feedbackEl.textContent = msg;
+    feedbackEl.className = `feedback-box ${type}`;
+    feedbackEl.style.display = 'block';
+}
+
+function highlightError(id) {
+    const el = document.getElementById(`timeline-${id}`);
+    if (el) {
+        el.classList.add('wrong');
+        setTimeout(() => el.classList.remove('wrong'), 2000);
+    }
+}
+
+document.getElementById('clear-btn').onclick = () => {
+    timelineEvents = [];
+    document.querySelectorAll('.event-line').forEach(r => r.classList.remove('selected'));
+    renderTimeline();
+    feedbackEl.style.display = 'none';
+};
+
+init();
+</script>
+
+</body>
+</html>s

@@ -125,13 +125,6 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             flex-direction: column;
-            transition: transform 0.2s, border-color 0.2s;
-            text-decoration: none;
-            color: inherit;
-        }
-        .stage-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent);
         }
         .stage-card h3 {
             margin-top: 0;
@@ -169,27 +162,23 @@
 
     <div class="top-nav">
         <div class="tabs">
-            <a href="Index.html" class="tab">0. Introduction</a>
+            <a href="index.html" class="tab">0. Introduction</a>
             <a href="detective.html" class="tab">1. Level 1 Incident</a>
-            <a href="Report.html" class="tab">2. Report 1</a>
-            <a href="detective2.html" class="tab">3. Level 2 Incident</a>
-            <a href="Report2.html" class="tab">4. Report 2</a>
-            <a href="Breach Sim.html" class="tab">5. Breach Simulator</a>
-            <a href="osint.html" class="tab">6. OSINT Analysis</a>
+            <a href="detective2.html" class="tab">2. Level 2 Incident</a>
+            <a href="Breach Sim.html" class="tab">3. Breach Simulator</a>
         </div>
-        <div class="brand">University of Lancashire — Training</div>
     </div>
-    
+
     <div class="container">
         <div class="header">
-            <h1>> CYBERSECURITY INCIDENT COMMANDER: CYBER ESSENTIAL PROTOCOL</h1>
-            <p style="margin-top:5px; font-size: 0.8em; color: var(--gold);">University of Lancashire | V.1.1</p>
+            <h1>> CYBERSECURITY INCIDENT COMMANDER: ESSENTIAL PROTOCOL</h1>
+            <p style="margin-top:5px; font-size: 0.8em; color: var(--gold);">University of Lancashire | V.1.1 </p>
         </div>
 
         <section>
             <h2>[I] Why This Matters to Your Career</h2>
             <p>
-                In the world of modern technology, if you touch code, data, or cloud infrastructure, you are inherently a <span class="highlight">security professional</span>. Cybersecurity isn't a niche; it's the high-stakes, non-negotiable foundation of every computing career.
+                In the world of modern technology, if you touch code, data, or cloud infrastructure, you are inherently a <span class="highlight">security professional</span> Cybersecurity isn't a niche; it's the high-stakes, non-negotiable foundation of every computing career].
             </p>
             <p>
                 Whether you're specialising in AI, building mobile apps, or managing massive cloud deployments, you will be a <span class="highlight">steward of sensitive data</span> and business continuity. A single, critical error—in code, configuration, or access management—can cost a company millions and destroy public trust.
@@ -218,25 +207,25 @@
         <section>
             <h2>[II] The Digital Detective's Journey</h2>
             <p>
-                Mastering the fundamentals of Incident Response (IR) means you become an asset capable of building resilient systems, ensuring trust, and saving the day when a breach occurs.
+                Mastering the fundamentals of Incident Response (IR) means you become an asset capable of building resilient systems, ensuring trust (GDPR, HIPAA), and saving the day when a breach occurs.
             </p>
 
             <div class="stage-grid">
-                <a href="detective.html" class="stage-card">
+                <div class="stage-card">
                     <h3>STAGE 1: Network Analysis Warm-up</h3>
                     <p class="mission-text">
                         <span class="gold-text">The Mission:</span> Your first mission is a straightforward, easily traceable attack. This is your introduction to digital network analysis, where you learn the foundational skill of reading and interpreting log data.
                     </p>
-                </a>
+                </div>
 
-                <a href="detective2.html" class="stage-card">
+                <div class="stage-card">
                     <h3>STAGE 2: Complex Investigation</h3>
                     <p class="mission-text">
                         <span class="gold-text">The Mission:</span> The threats get smarter. Tackle a scenario involving sophisticated, stealth-focused techniques often seen in <span class="highlight">Advanced Persistent Threats (APTs)</span>. The data is messier and tracks have been covered.
                     </p>
-                </a>
+                </div>
 
-                <a href="Breach%20Sim.html" class="stage-card">
+                <div class="stage-card">
                     <h3>STAGE 3: Command & Control</h3>
                     <p class="mission-text">
                         <span class="gold-text">The Mission:</span> This is the ultimate test—you become the <span class="highlight">Incident Commander</span>. The outcome depends entirely on your critical, time-sensitive decisions.
@@ -244,7 +233,7 @@
                     <div class="mechanic-box">
                         <strong>Sim Mechanic:</strong> Tracks performance via Organizational Health/Score. Good choices (isolation) improve score; bad choices (premature public statements) reduce it.
                     </div>
-                </a>
+                </div>
             </div>
         </section>
 

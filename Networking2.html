@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>University of Lancashire : Networking Path</title>
     <style>
-        /* Base Styles from Networking.html */
+        /* Base Styles copied from Networking.html */
         :root{
             --bg:#1a1a2e;
             --panel:#0f0f1b;
@@ -50,7 +50,7 @@
             font-weight: bold;
         }
         
-   
+        /* New Styles for Network Path Demonstration */
         .network-path-demonstrator {
             background: var(--panel);
             padding: 30px;
@@ -61,21 +61,21 @@
             text-align: center;
         }
 
-        /* Status Display Box */
+        /* Status Display - ADJUSTED FOR FIXED HEIGHT */
         #status-display {
             background: #000;
             color: var(--accent);
             padding: 15px;
             border-radius: 4px;
-            font-size: 1.1em; 
-            line-height: 1.4; 
+            font-size: 1.1em; /* Slight adjustment to font size */
+            line-height: 1.4; /* Better line spacing for multiple lines */
             margin-bottom: 30px;
-            min-height: 70px; 
+            min-height: 70px; /* Set fixed min-height to prevent resizing */
             text-align: left;
             border-left: 5px solid var(--gold);
         }
         
-
+        /* Components Layout (Flexbox) */
         .network-components {
             display: flex;
             align-items: center;
@@ -111,7 +111,7 @@
             margin-top: 5px;
         }
 
-       
+        /* The lines connecting components */
         .connection-line {
             height: 2px;
             background: var(--muted);
@@ -120,7 +120,7 @@
             transition: background 0.3s;
         }
         
-       
+        /* Interactive Highlight Class */
         .highlight-glow {
             color: var(--gold) !important;
             text-shadow: 0 0 20px var(--gold);
@@ -172,19 +172,19 @@
         <h1>> NETWORKING FUNDAMENTALS: THE PACKET'S JOURNEY</h1>
 
         <p>
-            When you send data—like clicking a link or sending an email—your computer doesn't send the whole message at once. Instead, it breaks the data into small chunks called "packets". These packets then embark on a carefully managed journey to their destination.
+            When you send data—like clicking a link or sending an email—your computer doesn't send the whole message at once. Instead, it breaks the data into small chunks called **packets**. These packets then embark on a carefully managed journey to their destination.
         </p>
         <p>
-            On a local network, the primary path for a packet trying to reach the outside world (the Internet) involves three essential steps: the "Gateway", the "Router", and the "Firewall".
+            On a local network, the primary path for a packet trying to reach the outside world (the Internet) involves three essential steps: the **Gateway**, the **Router**, and the **Firewall**.
         </p>
 
         <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 40px 0;">
 
-        <h2>How Surfing the internet Works</h2>
+        <h2>Simulate the Packet's Path</h2>
 
         <div class="network-path-demonstrator">
             <div id="status-display">
-                Click "SEND PACKET" to watch the data leave your local network.
+                Click **SEND PACKET** to watch the data leave your local network.
             </div>
             
             <div class="network-components">
@@ -228,70 +228,81 @@
 
         <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 40px 0;">
 
-        <h2>Key Definitions: The City Analogy 🗺️</h2>
+        <h2>Key Definitions</h2>
         <div style="background: var(--panel); padding: 20px; border-radius: 4px; margin-bottom: 20px; border-left: 5px solid var(--gold);">
             <ul>
-                <li><strong>Your PC (Your House 🏠):</strong> This is the source where the message (packet) is created.</li>
-                <li><strong>Gateway (Your Driveway/Local Exit ➡️):</strong> The specific, designated exit point your house (PC) must use to reach the main road.</li>
-                <li><strong>Router (The Post Office / Traffic Control 🚦):</strong> Reads the address on the message (packet) and uses a map (routing table) to decide the fastest main road (path) to send it out of your local city/network.</li>
-                <li><strong>Firewall (Security Checkpoint 🛡️):</strong> Inspects every message (packet) trying to enter or leave the city, ensuring it is authorized and safe before allowing it to pass.</li>
-                <li><strong>Internet (The Highway System / Other Cities 🌍):</strong> The vast network of main roads and connections outside your local city boundary, leading to every other destination on the globe.</li>
+                <li><strong>Gateway:</strong> The **exit door** for all local network traffic. The Gateway address is the IP of the local side of the Router, telling your PC where to send packets destined for the Internet.</li>
+                <li><strong>Router:</strong> A specialized device that **connects different networks**. It reads the destination IP in the packet and uses a **routing table** to decide the best path to forward the packet.</li>
+                <li><strong>Firewall:</strong> A system that **enforces a set of security rules**. It inspects packets to ensure they are safe and authorized before allowing them to enter or leave the network.</li>
+                <li><strong>Internet:</strong> A massive **network of networks** outside your local boundary.</li>
             </ul>
         </div>
     </div>
     
     <script>
+        // Store all elements
         const button = document.getElementById('send-packet-button');
         const statusDisplay = document.getElementById('status-display');
         
+        // Define all steps with detailed status messages
         const steps = [
+            // Stage 1: PC
             { 
                 target: document.getElementById('pc-icon'), 
                 type: 'icon', 
-                status: 'Packet created. Your PC breaks the data into small chunks, attaching a "header" that lists the destination IP address (where it\'s going) and the source IP (where it came from).' 
+                status: 'Packet created. Your PC breaks the data into small chunks, attaching a **header** that lists the destination IP address (where it\'s going) and the source IP (where it came from).' 
             },
+            // Line 1
             { 
                 target: document.getElementById('line-1'), 
                 type: 'line', 
                 status: 'Packet is now traveling across your local network segment (e.g., your Ethernet cable or Wi-Fi).' 
             },
+            // Stage 2: Gateway
             { 
                 target: document.getElementById('gateway-icon'), 
                 type: 'icon', 
-                status: 'Packet arrived at the "Gateway". Since the destination is external, your PC\'s software told the packet to head straight for the Gateway\'s address (usually the local side of your Router).' 
+                status: 'Packet arrived at the **Gateway**. Since the destination is external, your PC\'s software told the packet to head straight for the Gateway\'s address (usually the local side of your Router).' 
             },
+            // Line 2
             { 
                 target: document.getElementById('line-2'), 
                 type: 'line', 
                 status: 'The packet has crossed the internal Gateway interface. It is now inside the Router device.' 
             },
+            // Stage 3: Router
             { 
                 target: document.getElementById('router-icon'), 
                 type: 'icon', 
-                status: 'Packet arrived at the "Router". The Router inspects the packet\'s destination IP, looks up its "routing table", and decides which of its external interfaces (like the one facing the internet service provider) offers the best path forward.' 
+                status: 'Packet arrived at the **Router**. The Router inspects the packet\'s destination IP, looks up its **routing table**, and decides which of its external interfaces (like the one facing the internet service provider) offers the best path forward.' 
             },
+            // Line 3
             { 
                 target: document.getElementById('line-3'), 
                 type: 'line', 
                 status: 'The Router is directing the packet out toward the outside world.' 
             },
+            // Stage 4: Firewall
             { 
                 target: document.getElementById('firewall-icon'), 
                 type: 'icon', 
-                status: 'Packet is inspected by the "Firewall". The Firewall checks the packet\'s header against a set of rules—ensuring it\'s not malicious and that traffic on that specific port (e.g., HTTP 80) is permitted to leave your network.' 
+                status: 'Packet is inspected by the **Firewall**. The Firewall checks the packet\'s header against a set of rules—ensuring it\'s not malicious and that traffic on that specific port (e.g., HTTP 80) is permitted to leave your network.' 
             },
+            // Line 4
             { 
                 target: document.getElementById('line-4'), 
                 type: 'line', 
                 status: 'Passed the security check. The packet is now leaving your immediate network boundary.' 
             },
+            // Stage 5: Internet
             { 
                 target: document.getElementById('internet-icon'), 
                 type: 'icon', 
-                status: 'Packet has entered the "Internet"! From here, it begins jumping from router to router (a process called ""hopping"") across the globe until it reaches its final destination.' 
+                status: 'Packet has entered the **Internet**! From here, it begins jumping from router to router (a process called **"hopping"**) across the globe until it reaches its final destination.' 
             }
         ];
 
+        // Resets the visual state
         function resetVisuals() {
             steps.forEach(step => {
                 if (step.type === 'icon') {
@@ -301,20 +312,21 @@
                     step.target.classList.remove('line-active');
                 }
             });
-            statusDisplay.textContent = 'Click "SEND PACKET" to watch the data leave your local network.';
+            statusDisplay.textContent = 'Click SEND PACKET to watch the data leave your local network.';
         }
 
+        // Main simulation function
         function sendPacket() {
             if (button.disabled) return;
             
             button.disabled = true;
-            resetVisuals(); 
+            resetVisuals(); // Ensure a clean slate
             
             let delay = 0;
-            // Updated Duration: 4.5 seconds for nodes
-            const stepDuration = 4500; 
-            // Updated Duration: 1.0 second for lines
-            const lineDuration = 1000; 
+            // Standard step duration is 3 seconds (3000ms)
+            const stepDuration = 3000; 
+            // Line travel is quicker for better flow (e.g., 500ms)
+            const lineDuration = 500; 
 
             for (let i = 0; i < steps.length; i++) {
                 const step = steps[i];
@@ -322,12 +334,11 @@
 
                 setTimeout(() => {
                     
-                    statusDisplay.textContent = step.status; 
-                   
+                    // --- 1. VISUAL UPDATE ---
                     if (step.type === 'icon') {
-                    
+                        // Highlight the icon
                         step.target.classList.add('highlight-glow');
-                        
+                        // Un-highlight previous icon after a short delay for the "flash" effect (only if previous was an icon)
                         for (let j = i - 1; j >= 0; j--) {
                             if (steps[j].type === 'icon') {
                                 setTimeout(() => {
@@ -337,15 +348,19 @@
                             }
                         }
                     } else if (step.type === 'line') {
+                        // Highlight the line
                         step.target.classList.add('line-active');
                     }
                     
-                   
+                    // --- 2. STATUS UPDATE ---
+                    statusDisplay.innerHTML = step.status;
+
+                    // --- 3. FINAL STEP LOGIC ---
                     if (i === steps.length - 1) {
                         setTimeout(() => {
                             button.disabled = false;
-                            statusDisplay.innerHTML = 'Packet has entered the "Internet"! <span style="color: var(--gold)">The connection is established, and the website is loading...</span>';
-                           
+                            statusDisplay.innerHTML += ' <span style="color: var(--gold)">The connection is established, and the website is loading...</span>';
+                            // Reset visuals after a brief pause
                             setTimeout(resetVisuals, 2000); 
                         }, currentDuration);
                     }
@@ -355,6 +370,7 @@
             }
         }
         
+        // Initial setup
         document.addEventListener('DOMContentLoaded', resetVisuals);
     </script>
 </body>

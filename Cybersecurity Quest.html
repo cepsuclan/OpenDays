@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cybersecurity Quest: School-Leaver Edition - Spot the Phish (Dark Tech Mode)</title>
     <style>
-        /* Base Styles: Dark and professional */
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             margin: 0;
             padding: 30px;
             
-            /* Background image, enlarged and fixed to the left */
-            background-color: #1a1e24; /* Deep, dark background base color */
-            background-image: url('uclan logo.png'); /* Placeholder for your image */
+           
+            background-color: #1a1e24; 
+            background-image: url('uclan logo.png'); 
             background-repeat: no-repeat;
             background-size: 80%;
             background-position: left center;
@@ -22,45 +22,45 @@
             
             color: #e0e0e0; /* Light text for contrast */
         }
-        /* Container: Highly Transparent */
+       
         .container {
             max-width: 1400px; 
             margin: 0 auto;
-            /* UPDATED: Low opacity background for transparency effect */
-            background-color: rgba(44, 51, 62, 0.05); /* Nearly transparent dark overlay */
+          
+            background-color: rgba(44, 51, 62, 0.05); 
             padding: 50px;
             border-radius: 6px; 
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-            border: 2px solid #00aaff; /* Subtle blue tech border */
+            border: 2px solid #00aaff; 
         }
-        /* Headings: Bold, contrasting colors */
+        
         h1 {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #00aaff; /* Bright blue for main title */
+            color: #00aaff; 
             text-align: center;
             font-size: 2.5em; 
             text-transform: uppercase;
             letter-spacing: 2px;
         }
         h2 {
-            color: #e0e0e0; /* Light gray for section titles */
+            color: #e0e0e0; 
             text-align: center;
-            border-bottom: 2px solid #00aaff; /* Blue accent line */
+            border-bottom: 2px solid #00aaff; 
             padding-bottom: 10px;
             margin-top: 40px;
             font-size: 1.8em;
         }
-        /* Explanation Box: Alert color with dark text */
+       
         .explanation p {
-            background: #3a4452; /* Darker background for callout box */
+            background: #3a4452; 
             padding: 18px;
-            border-left: 5px solid #ffaa00; /* Amber warning stripe */
+            border-left: 5px solid #ffaa00; 
             border-radius: 4px;
             margin-bottom: 20px;
             color: #e0e0e0;
         }
         .explanation strong {
-            color: #ffaa00; /* Amber highlight */
+            color: #ffaa00; 
             font-weight: bold;
         }
         .scenario-box {
@@ -71,7 +71,7 @@
             margin-top: 25px;
             font-size: 1.1em;
         }
-        /* Email Cards: Focus on structure */
+        
         .email-container {
             display: flex;
             justify-content: space-between;
@@ -83,18 +83,18 @@
             padding: 20px;
             border: 1px solid #4f5b66;
             border-radius: 4px;
-            background-color: #242a31; /* Dark email card background for readability */
+            background-color: #242a31; 
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
         }
         .email-card:hover {
             box-shadow: 0 0 15px rgba(0, 170, 255, 0.4);
-            border-color: #00aaff; /* Blue glow on hover */
+            border-color: #00aaff; 
             transform: translateY(-2px);
         }
         .email-card.selected {
-            border: 4px solid #ffaa00; /* Amber selection border */
+            border: 4px solid #ffaa00; 
             box-shadow: 0 0 15px rgba(255, 170, 0, 0.7);
         }
         .email-card h3 {
@@ -103,23 +103,23 @@
             border-bottom: 1px solid #4f5b66;
             padding-bottom: 8px;
         }
-        /* Email Content Simulation (PRE tag) */
+       
         .email-card pre {
             white-space: pre-wrap;
-            font-family: 'Consolas', 'Courier New', monospace; /* Monospace for code/headers */
-            background-color: #1a1e24; /* Darker pre-block */
+            font-family: 'Consolas', 'Courier New', monospace; 
+            background-color: #1a1e24; 
             padding: 15px;
             border: 1px dashed #4f5b66;
             border-radius: 4px;
             font-size: 0.9em; 
             line-height: 1.4;
-            color: #a0a0a0; /* Subdued text inside email body */
+            color: #a0a0a0;
         }
         /* Phishing Clue Highlighting */
         #email-3 pre .spoofed-from,
         #email-5 pre .spoofed-from {
             font-weight: bold;
-            color: #ff6666; /* Red highlight for malicious sender */
+            color: #ff6666; 
         }
         #email-3 pre .subtle-font,
         #email-5 pre .subtle-font {
@@ -131,13 +131,13 @@
             color: #00aaff;
             text-decoration: underline;
         }
-        /* Activity Area: Action button */
+       
         .activity-area {
             margin-top: 40px;
             text-align: center;
         }
         .activity-area button {
-            background-color: #28a745; /* Clean green for primary action */
+            background-color: #28a745; 
             color: white;
             padding: 14px 40px;
             border: none;
@@ -151,7 +151,7 @@
             background-color: #1e7e34;
             box-shadow: 0 0 10px rgba(40, 167, 69, 0.6);
         }
-        /* Feedback Boxes */
+        
         .feedback {
             margin-top: 30px;
             padding: 25px;
@@ -162,12 +162,12 @@
             font-weight: bold;
         }
         .feedback.correct {
-            background-color: #1f3d2f; /* Dark green correct */
+            background-color: #1f3d2f; 
             color: #28a745;
             border: 2px solid #28a745;
         }
         .feedback.incorrect {
-            background-color: #4a2828; /* Dark red incorrect */
+            background-color: #4a2828; 
             color: #ff6666;
             border: 2px solid #ff6666;
         }
@@ -200,11 +200,11 @@
         <div class="explanation">
             <h2>Threat Emulation Training Module: Post-Graduation Focus</h2>
             <p>
-                As you transition to **university** or the **workforce**, your personal data remains **mission critical**. 
-                **Cybersecurity** protocols prevent unauthorized access. Compromise of your private accounts can lead to **financial loss** or identity theft. Your mission is to maintain a strong **Security Posture**.
+                As you transition to 'university' or the 'workforce', your personal data remains 'mission critical'. 
+                'Cybersecurity' protocols prevent unauthorized access. Compromise of your private accounts can lead to 'financial loss' or identity theft. Your mission is to maintain a strong 'Security Posture'.
             </p>
             <p>
-                **Phishing** uses social engineering to trick you into submitting your credentials. Analyze the source headers and payload of the following simulated inbound communications regarding **future plans and finances**.
+                'Phishing' uses social engineering to trick you into submitting your credentials. Analyze the source headers and payload of the following simulated inbound communications regarding 'future plans and finances'.
             </p>
         </div>
 
@@ -214,9 +214,9 @@
             <h2>🚨 Threat Scenario 1: University Enrolment Credential Harvest</h2>
             <div class="scenario-box">
                 <p>
-                    Expected communication channel for student financing: **@riversidecrest.edu**. Two inbound packets detected regarding your university financing.
+                    Expected communication channel for student financing: '@riversidecrest.edu'. Two inbound packets detected regarding your university financing.
                     <br><br>
-                    <strong>ACTION REQUIRED:</strong> Identify the **Legitimate Channel** to proceed.
+                    <strong>ACTION REQUIRED:</strong> Identify the 'Legitimate Channel' to proceed.
                 </p>
             </div>
 
@@ -283,9 +283,9 @@ Riverside Crest University
             <h2>🧠 Threat Scenario 2: Career Service Spoofing (Advanced)</h2>
             <div class="scenario-box">
                 <p>
-                    Mission 1 Status: **[SUCCESS]**. This scenario utilizes **domain spoofing** and **curiosity/job-search anxiety** tactics, appearing to be from the Career Services team.
+                    Mission 1 Status: '[SUCCESS]'. This scenario utilizes 'domain spoofing' and 'curiosity/job-search anxiety' tactics, appearing to be from the Career Services team.
                     <br><br>
-                    <strong>ACTION REQUIRED:</strong> Scrutinize all sender and URL data. Select the **Authentic Communication**.
+                    <strong>ACTION REQUIRED:</strong> Scrutinize all sender and URL data. Select the 'Authentic Communication'.
                 </p>
             </div>
 
@@ -356,9 +356,9 @@ Director of Placement, RCS
             <h2>🔥 Threat Scenario 3: Homoglyph Domain Spoof (Critical Alert)</h2>
             <div class="scenario-box">
                 <p>
-                    Mission 2 Status: **[SUCCESS]**. This final scenario uses **Homoglyph Spoofing**, replacing Latin letters with visually identical characters from the **Cyrillic** or other alphabets (e.g., `a` vs `а`).
+                    Mission 2 Status: '[SUCCESS]'. This final scenario uses 'Homoglyph Spoofing', replacing Latin letters with visually identical characters from the 'Cyrillic' or other alphabets (e.g., `a` vs `а`).
                     <br><br>
-                    <strong>ACTION REQUIRED:</strong> Zoom in and check the email address and URL *character-by-character*. Select the **Legitimate Communication**.
+                    <strong>ACTION REQUIRED:</strong> Zoom in and check the email address and URL *character-by-character*. Select the 'Legitimate Communication'.
                 </p>
             </div>
 
@@ -482,17 +482,17 @@ Riverside Crest School
                 // Logic for Challenge 1
                 if (selectedEmail === 2) {
                     feedbackDiv.className = 'feedback correct';
-                    feedbackDiv.innerHTML = '✅ **AUTHENTICATION SUCCESS: Packet B is VALID.**' +
+                    feedbackDiv.innerHTML = '✅ 'AUTHENTICATION SUCCESS: Packet B is VALID.'' +
                         '<br><br><strong>Analysis:</strong> Correct sender domain (`@riversidecrest.edu`), low-urgency tone, and official link (`portal.riversidecrest.edu`). Threat Neutralized.' +
-                        '<br><br>➡️ **Commencing Threat Scenario 2...** Scroll down!';
+                        '<br><br>➡️ 'Commencing Threat Scenario 2...' Scroll down!';
                 } else {
                     feedbackDiv.className = 'feedback incorrect';
-                    feedbackDiv.innerHTML = '❌ **AUTHENTICATION FAILURE: Packet A is MALICIOUS (Phish).**' +
+                    feedbackDiv.innerHTML = '❌ 'AUTHENTICATION FAILURE: Packet A is MALICIOUS (Phish).'' +
                         '<br><br><strong>Security Flags:</strong>' +
                         '<ul>' +
-                        '<li>**DOMAIN MISMATCH:** From `@riverside-support-finance.net`, not the official **@riversidecrest.edu**.</li>' +
-                        '<li>**HIGH URGENCY:** Uses "URGENT," "immediately," and a time limit to exploit **financial fear**.</li>' +
-                        '<li>**KEYLOGGING LURE:** Link (`crest-university-aid.logins.cc`) is a fake credential harvesting site designed to steal **bank/student account details**.</li>' +
+                        '<li>'DOMAIN MISMATCH:' From `@riverside-support-finance.net`, not the official '@riversidecrest.edu'.</li>' +
+                        '<li>'HIGH URGENCY:' Uses "URGENT," "immediately," and a time limit to exploit 'financial fear'.</li>' +
+                        '<li>'KEYLOGGING LURE:' Link (`crest-university-aid.logins.cc`) is a fake credential harvesting site designed to steal 'bank/student account details'.</li>' +
                         '</ul>' +
                         'Proceeding to Threat Scenario 2.';
                 }
@@ -509,17 +509,17 @@ Riverside Crest School
                  // Logic for Challenge 2
                 if (selectedEmail === 4) {
                     feedbackDiv.className = 'feedback correct';
-                    feedbackDiv.innerHTML = '👑 **THREAT NEUTRALIZED! Packet D is VALID.**' +
-                        '<br><br><strong>Analysis:</strong> Correct staff address (`phughes@riversidecrest.edu`). Concerns a **pre-scheduled, low-urgency** event, requiring no immediate login. Official portal link verified.' +
-                        '<br><br>➡️ **Commencing Threat Scenario 3...** Scroll down!';
+                    feedbackDiv.innerHTML = '👑 'THREAT NEUTRALIZED! Packet D is VALID.'' +
+                        '<br><br><strong>Analysis:</strong> Correct staff address (`phughes@riversidecrest.edu`). Concerns a 'pre-scheduled, low-urgency' event, requiring no immediate login. Official portal link verified.' +
+                        '<br><br>➡️ 'Commencing Threat Scenario 3...' Scroll down!';
                 } else {
                     feedbackDiv.className = 'feedback incorrect';
-                    feedbackDiv.innerHTML = '🚨 **BREACH DETECTED! Packet C is MALICIOUS (Advanced Spoof).**' +
+                    feedbackDiv.innerHTML = '🚨 'BREACH DETECTED! Packet C is MALICIOUS (Advanced Spoof).'' +
                         '<br><br><strong>Advanced Flags:</strong>' +
                         '<ul>' +
-                        '<li>**SPOOFED DOMAIN:** Actual sender domain (`riverdaleacrestservices.com`) is incorrect and misspelled (a common tactic).</li>' +
-                        '<li>**SOCIAL ENGINEERING:** Uses the lure of a "highly confidential, six-figure job" to exploit **excitement and haste**.</li>' +
-                        '<li>**PHISHING LURE:** The login link (`careers.riverside-crest.org`) is designed to capture credentials.</li>' +
+                        '<li>'SPOOFED DOMAIN:' Actual sender domain (`riverdaleacrestservices.com`) is incorrect and misspelled (a common tactic).</li>' +
+                        '<li>'SOCIAL ENGINEERING:' Uses the lure of a "highly confidential, six-figure job" to exploit 'excitement and haste'.</li>' +
+                        '<li>'PHISHING LURE:' The login link (`careers.riverside-crest.org`) is designed to capture credentials.</li>' +
                         '</ul>' +
                         'Proceeding to Threat Scenario 3.';
                 }
@@ -535,19 +535,19 @@ Riverside Crest School
             } else { // Challenge 3 Logic (Homoglyph Attack)
                 if (selectedEmail === 6) {
                     feedbackDiv.className = 'feedback correct';
-                    feedbackDiv.innerHTML = '💯 **MISSION COMPLETE! Packet F is VALID.**' +
+                    feedbackDiv.innerHTML = '💯 'MISSION COMPLETE! Packet F is VALID.'' +
                         '<br><br><strong>Analysis:</strong> Correct, standard-issue domain (`alumni@riversidecrest.edu`). Low-urgency, standard request for alumni, using a verified internal link.' +
-                        '<br><br>**FINAL ASSESSMENT:** All threats contained. Your Security Posture is highly effective against advanced social engineering.' ;
+                        '<br><br>'FINAL ASSESSMENT:' All threats contained. Your Security Posture is highly effective against advanced social engineering.' ;
                 } else if (selectedEmail === 5) {
                     feedbackDiv.className = 'feedback incorrect';
-                    feedbackDiv.innerHTML = '⚠️ **HOMOGRAPH ATTACK SUCCESSFUL! Packet E is MALICIOUS.**' +
+                    feedbackDiv.innerHTML = '⚠️ 'HOMOGRAPH ATTACK SUCCESSFUL! Packet E is MALICIOUS.'' +
                         '<br><br><strong>Security Flags:</strong>' +
                         '<ul>' +
-                        '<li>**HOMOGLYPH SENDER:** The domain `riversidecr<span style="color:#ff6666;">е</span>st.edu` uses a **Cyrillic character** (`е`) in place of the Latin `e`. This is **impossible to spot visually**.</li>' +
-                        '<li>**HOMOGLYPH URL:** The link `r<span style="color:#ff6666;">і</span>versidecrest-health.com` uses a **Cyrillic character** (`і`) in place of the Latin `i`.</li>' +
-                        '<li>**EXTREME FEAR:** Uses "IMMEDIATE ACTION," "Suspension Pending," and "major penalties" to pressure a quick, unverified click.</li>' +
+                        '<li>'HOMOGLYPH SENDER:' The domain `riversidecr<span style="color:#ff6666;">е</span>st.edu` uses a 'Cyrillic character' (`е`) in place of the Latin `e`. This is 'impossible to spot visually'.</li>' +
+                        '<li>'HOMOGLYPH URL:' The link `r<span style="color:#ff6666;">і</span>versidecrest-health.com` uses a 'Cyrillic character' (`і`) in place of the Latin `i`.</li>' +
+                        '<li>'EXTREME FEAR:' Uses "IMMEDIATE ACTION," "Suspension Pending," and "major penalties" to pressure a quick, unverified click.</li>' +
                         '</ul>' +
-                        '**Key Takeaway:** Always hover over links to check the URL preview for non-standard characters, especially in urgent emails.';
+                        ''Key Takeaway:' Always hover over links to check the URL preview for non-standard characters, especially in urgent emails.';
                 }
             }
         }
